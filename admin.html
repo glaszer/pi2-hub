@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi² | Admin Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #F8F9FC; font-family: 'Inter', sans-serif; display: flex; justify-content: center; padding: 40px; color: #0F172A; }
+        .admin-box { background: #fff; width: 100%; max-width: 500px; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); border: 1px solid #E2E8F0; }
+        h1 { font-family: 'Manrope'; font-weight: 800; margin-bottom: 30px; text-align: center; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; background: #F1F5F9; padding: 5px; border-radius: 12px; }
+        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: #64748B; transition: 0.2s; }
+        .tab-btn.active { background: #fff; color: #7F2FFF; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #64748B; margin-bottom: 8px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #E2E8F0; border-radius: 10px; font-family: 'Inter'; font-size: 14px; box-sizing: border-box; }
+        input:focus { outline: none; border-color: #7F2FFF; box-shadow: 0 0 0 3px rgba(127, 47, 255, 0.1); }
+        
+        .btn-submit { width: 100%; padding: 15px; background: #0F172A; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn-submit:hover { background: #7F2FFF; }
+        .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+
+        .status { margin-top: 20px; text-align: center; font-size: 13px; font-weight: 600; display: none; }
+        .success { color: #10B981; }
+        .error { color: #EF4444; }
+
+        /* Forms visibility */
+        .form-content { display: none; }
+        .form-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <h1>Pi² Command Center</h1>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showForm('spotlight')">Add Spotlight</button>
+            <button class="tab-btn" onclick="showForm('events')">Add Event</button>
+        </div>
+
+        <!-- SPOTLIGHT FORM -->
+        <div id="form-spotlight" class="form-content active">
+            <form onsubmit="submitForm(event, 'spotlight')">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" placeholder="e.g. New Partnership" required>
+                </div>
+                <div class="form-group">
+                    <label>Author / Source</label>
+                    <input type="text" name="author" placeholder="e.g. @PiSquared" required>
+                </div>
+                <div class="form-group">
+                    <label>Tag</label>
+                    <select name="tag">
+                        <option value="News">News</option>
+                        <option value="Tweet">Tweet</option>
+                        <option value="Video">Video</option>
+                        <option value="Article">Article</option>
+                        <option value="Official">Official</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Link to Content</label>
+                    <input type="url" name="link" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label>Image URL (Optional)</label>
+                    <input type="url" name="image" placeholder="Right click on Discord image -> Copy Link">
+                </div>
+                <div class="form-group">
+                    <label>Pin to top?</label>
+                    <select name="pin">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">Publish Spotlight</button>
+            </form>
+        </div>
+
+        <!-- EVENTS FORM -->
+        <div id="form-events" class="form-content">
+            <form onsubmit="submitForm(event, 'events')">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" placeholder="e.g. Community Call" required>
+                </div>
+                <div class="form-group">
+                    <div style="display:flex; gap:10px;">
+                        <div style="flex:1">
+                            <label>Day</label>
+                            <input type="text" name="day" placeholder="25" required>
+                        </div>
+                        <div style="flex:1">
+                            <label>Month</label>
+                            <input type="text" name="month" placeholder="OCT" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Time (UTC)</label>
+                    <input type="text" name="time" placeholder="16:00 UTC" required>
+                </div>
+                <div class="form-group">
+                    <label>Event Link</label>
+                    <input type="url" name="link" placeholder="https://discord.gg/..." required>
+                </div>
+                <button type="submit" class="btn-submit">Publish Event</button>
+            </form>
+        </div>
+
+        <div id="status-msg" class="status"></div>
+    </div>
+
+    <script>
+        // --- CONFIG ---
+        // ВСТАВЬТЕ ССЫЛКУ НА ВАШ GOOGLE APPS SCRIPT СЮДА:
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyesa4kGnzMisgbyvv6WF_Wh6VM8Rrwsfgu0yQ1GTY0FMdiE20mNAzJp2yN2zoKdIam/exec";
+
+        function showForm(id) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.form-content').forEach(f => f.classList.remove('active'));
+            document.getElementById('form-' + id).classList.add('active');
+        }
+
+        function submitForm(e, type) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const status = document.getElementById('status-msg');
+            const form = e.target;
+            
+            btn.disabled = true;
+            btn.innerText = "Sending...";
+            status.style.display = 'none';
+
+            // Collect Data
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+
+            // Send to Google Script
+            fetch(SCRIPT_URL + "?type=" + type, {
+                method: "POST",
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                status.innerText = "Success! Data added to Sheet.";
+                status.className = "status success";
+                status.style.display = "block";
+                form.reset();
+            })
+            .catch(error => {
+                status.innerText = "Error! Check console.";
+                status.className = "status error";
+                status.style.display = "block";
+                console.error(error);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerText = type === 'events' ? "Publish Event" : "Publish Spotlight";
+            });
+        }
+    </script>
+</body>
+</html>
