@@ -34,12 +34,8 @@
             overflow: hidden;
         }
 
-        #math-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
-        #particles-js { position: absolute; top:0; left:0; width: 100%; height: 100%; z-index: 1; opacity: 0.5; pointer-events: none;}
-        .math-symbol { position: absolute; color: var(--brand); opacity: 0.06; font-family: 'Times New Roman'; font-weight: bold; transition: transform 0.1s linear; }
-
         .interface {
-            position: relative; z-index: 10; width: 95%; max-width: 1100px; height: 85vh;
+            position: relative; z-index: 10; width: 95%; max-width: 1200px; height: 90vh;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px);
             border: 1px solid #fff; border-radius: var(--radius);
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
@@ -75,7 +71,7 @@
             height: 100%; width: 100%;
         }
         .dash-left { padding: 30px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
-        .dash-right { background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden; }
+        .dash-right { background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden; position: relative;}
 
         /* Resource Links */
         .res-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px; }
@@ -88,24 +84,47 @@
         .res-icon { width: 36px; height: 36px; background: #F5F0FF; color: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
 
         /* Widgets */
-        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 180px; }
+        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 240px; }
         .dash-widget {
             background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 24px;
             display: flex; flex-direction: column; justify-content: space-between;
             transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
         }
         .dash-widget:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
-        .widget-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .widget-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; justify-content: space-between; z-index: 2; position: relative; }
         
-        .top-leader-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #FFD700; margin-bottom: 10px; }
-        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 18px; }
-        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 18px; line-height: 1.3; }
-        .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 5px; display: flex; align-items: center; gap: 6px; }
+        /* NEW: Leader Widget Styling */
+        .leader-widget-content {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;
+            position: relative;
+        }
+        .leader-banner {
+            position: absolute; top: 0; left: 0; width: 100%; height: 80px;
+            background: var(--border); opacity: 0.2; z-index: 0;
+        }
+        .leader-avatar-wrapper { position: relative; z-index: 1; margin-top: 20px; margin-bottom: 10px; }
+        .top-leader-avatar { 
+            width: 70px; height: 70px; border-radius: 50%; object-fit: cover; 
+            border: 3px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+        }
+        .leader-crown {
+            position: absolute; top: -15px; right: -5px; font-size: 20px; color: #FFD700;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); animation: float 2s infinite ease-in-out;
+        }
+        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 18px; margin-bottom: 5px; }
+        .top-leader-role { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: #fff; background: #000; }
+        
+        /* Event Widget */
+        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 20px; line-height: 1.3; }
+        .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 10px; display: flex; align-items: center; gap: 8px; background: #F8FAFC; padding: 8px 12px; border-radius: 8px; width: fit-content; }
 
         /* Twitter */
-        .twitter-embed { width: 100%; height: 100%; border: none; }
+        .twitter-embed { width: 100%; height: 100%; border: none; overflow-y: scroll; padding-right: 5px; }
+        /* Custom scrollbar for twitter area */
+        .dash-right::-webkit-scrollbar { width: 4px; }
+        .dash-right::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
 
-        /* --- LEADERBOARD --- */
+        /* LEADERBOARD */
         .lb-container { width: 100%; max-width: 800px; margin: 0 auto; }
         .sub-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-shrink: 0; flex-wrap: wrap;}
         .sub-btn { padding: 6px 16px; font-size: 12px; font-family: 'JetBrains Mono'; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; color: var(--text-sub); transition: 0.2s; }
@@ -163,6 +182,8 @@
         .event-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; }
         .cal-btn { background: #0F172A; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; }
 
+        @keyframes float { 0% {transform: translateY(0px);} 50% {transform: translateY(-5px);} 100% {transform: translateY(0px);} }
+
         @media (max-width: 900px) {
             .dash-container { grid-template-columns: 1fr; }
             .dash-right { display: none; }
@@ -173,7 +194,6 @@
 </head>
 <body>
 
-    <div id="math-layer"></div>
     <div id="particles-js"></div>
 
     <div class="interface">
@@ -218,15 +238,17 @@
                                 <div id="dash-event-time" class="next-event-time">...</div>
                             </div>
                             
-                            <!-- Widget: Top Leader -->
+                            <!-- Widget: Top Leader (UPGRADED) -->
                             <div class="dash-widget" onclick="switchTab('leaderboard')">
-                                <div class="widget-label"><span>Top Contributor</span> <i class="fa-solid fa-trophy" style="color:#FFD700"></i></div>
-                                <div style="display:flex; align-items:center; gap:12px;">
-                                    <div id="dash-top-avatar" style="width:40px; height:40px; background:#f0f0f0; border-radius:50%;"></div>
-                                    <div>
-                                        <div id="dash-top-user" class="top-leader-name">Loading...</div>
-                                        <div id="dash-top-role" style="font-size:10px; font-weight:700; color:var(--text-sub);">RANK #1</div>
+                                <!-- Background banner dynamically set by JS -->
+                                <div id="leader-banner" class="leader-banner"></div> 
+                                <div class="leader-widget-content">
+                                    <div class="leader-avatar-wrapper">
+                                        <i class="fa-solid fa-crown leader-crown"></i>
+                                        <div id="dash-top-avatar" class="top-leader-avatar" style="background:#ddd;"></div>
                                     </div>
+                                    <div id="dash-top-user" class="top-leader-name">Loading...</div>
+                                    <div id="dash-top-role" class="top-leader-role">TOP CONTRIBUTOR</div>
                                 </div>
                             </div>
                         </div>
@@ -234,7 +256,13 @@
 
                     <!-- Right: Twitter -->
                     <div class="dash-right">
-                        <a class="twitter-timeline" data-height="600" data-theme="light" data-chrome="noheader nofooter transparent" href="https://twitter.com/PiSquared?ref_src=twsrc%5Etfw">Loading Tweets...</a> 
+                        <a class="twitter-timeline" data-height="100%" data-theme="light" data-chrome="noheader nofooter transparent" href="https://twitter.com/PiSquared?ref_src=twsrc%5Etfw">
+                            <div style="padding:20px; text-align:center; color:#999; display:flex; flex-direction:column; gap:10px; align-items:center; justify-content:center; height:100%;">
+                                <i class="fa-brands fa-x-twitter" style="font-size:30px;"></i>
+                                <span>Loading feed...<br><span style="font-size:12px">(Disable AdBlock if not loading)</span></span>
+                                <a href="https://twitter.com/PiSquared" target="_blank" class="cal-btn">Open on X</a>
+                            </div>
+                        </a> 
                         <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                     </div>
                 </div>
@@ -264,6 +292,7 @@
                         <button class="sub-btn" onclick="filterLeaderboard('Catalyst', this)">Catalyst</button>
                         <button class="sub-btn" onclick="filterLeaderboard('Neophyte', this)">Neophyte</button>
                     </div>
+                    
                     <div id="lb-podium" class="lb-podium"></div>
                     <div id="lb-list" class="lb-list"></div>
                 </div>
@@ -273,7 +302,7 @@
     </div>
 
     <script>
-        // --- CONFIGURATION ---
+        // CONFIG
         const SHEET_LINKS = {
             spotlight: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=1051549890&single=true&output=csv",
             events: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=762300614&single=true&output=csv",
@@ -298,17 +327,6 @@
                 if(window.particlesJS) {
                     particlesJS("particles-js", {"particles":{"number":{"value":25},"color":{"value":"#7F2FFF"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":false},"move":{"speed":0.5}}});
                 }
-                const bg = document.getElementById('math-layer');
-                const symbols = ['π', '∑', '∫', '√', '≈', '∅'];
-                for(let i=0; i<15; i++) {
-                    const el = document.createElement('div');
-                    el.classList.add('math-symbol');
-                    el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-                    el.style.left = Math.random() * 100 + '%';
-                    el.style.top = Math.random() * 100 + '%';
-                    el.style.fontSize = (Math.random() * 30 + 10) + 'px';
-                    bg.appendChild(el);
-                }
             } catch(e) {}
 
             renderDashboard();
@@ -317,14 +335,16 @@
             
             await Promise.all([fetchData('spotlight'), fetchData('events'), fetchData('leaderboard')]);
             
-            // Mock Data if fetch fails or empty (for demo)
+            // Mock Data
             if(data.leaderboard.length === 0) {
                  data.leaderboard = [
-                    {username: "Satoshi", role: "Harmony", points: "5000", avatar: "", change: "+100"},
-                    {username: "Vitalik", role: "Luminary", points: "4200", avatar: "", change: "0"},
-                    {username: "Gavin", role: "Catalyst", points: "3800", avatar: "", change: "+50"},
-                    {username: "Alice", role: "Neophyte", points: "1200", avatar: "", change: "NEW"}
+                    {username: "Maffoos", role: "Luminary", points: "5000", avatar: "", change: "+100"},
+                    {username: "Vitalik", role: "Harmony", points: "4200", avatar: "", change: "0"},
+                    {username: "Gavin", role: "Catalyst", points: "3800", avatar: "", change: "+50"}
                 ];
+            }
+            if(data.events.length === 0) {
+                data.events = [ {day: "15", month: "DEC", title: "AMA with Founder", time: "18:00 EST", link: "#"} ];
             }
 
             renderDashboard();
@@ -372,10 +392,21 @@
             if(data.leaderboard.length > 0) {
                 const sorted = [...data.leaderboard].sort((a,b) => parseInt(b.points) - parseInt(a.points));
                 const top = sorted[0];
+                
                 document.getElementById('dash-top-user').innerText = top.username;
-                document.getElementById('dash-top-role').innerHTML = `<span style="color:${ROLES[top.role]?.color || '#000'}">● ${top.role}</span>`;
-                if(top.avatar) document.getElementById('dash-top-avatar').innerHTML = `<img src="${top.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-                else document.getElementById('dash-top-avatar').innerHTML = `<div style="width:100%;height:100%;border-radius:50%;background:${ROLES[top.role]?.color||'#333'};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;">${top.username[0]}</div>`;
+                const roleInfo = ROLES[top.role] || ROLES["Neophyte"];
+                
+                // Set banner color
+                document.getElementById('leader-banner').style.background = roleInfo.color;
+                
+                document.getElementById('dash-top-role').innerText = "● " + top.role;
+                document.getElementById('dash-top-role').style.background = "#fff";
+                document.getElementById('dash-top-role').style.color = "#000";
+                document.getElementById('dash-top-role').style.border = "1px solid #eee";
+                
+                const avHtml = top.avatar ? `<img src="${top.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : `<div style="width:100%;height:100%;border-radius:50%;background:${roleInfo.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:24px;">${top.username[0]}</div>`;
+                document.getElementById('dash-top-avatar').innerHTML = avHtml;
+                document.getElementById('dash-top-avatar').style.borderColor = "#fff"; // Clean border
             } else {
                 document.getElementById('dash-top-user').innerText = "Loading...";
             }
