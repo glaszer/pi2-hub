@@ -276,158 +276,183 @@
     <canvas id="badge-canvas" width="600" height="360"></canvas>
 
     <script>
-        // CONFIG
+        // === НАСТРОЙКИ (ВСТАВЬТЕ СВОИ ССЫЛКИ СЮДА) ===
         const SHEET_LINKS = {
-            quotes: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=0&single=true&output=csv",
-            spotlight: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=1051549890&single=true&output=csv",
-            events: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=762300614&single=true&output=csv"
+            // Внимание: проверьте параметр gid=...
+            quotes: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?output=csv",
+            spotlight: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=ЗДЕСЬ_ВАШИ_ЦИФРЫ&output=csv",
+            events: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=ЗДЕСЬ_ВАШИ_ЦИФРЫ&output=csv"
         };
 
+        // Запасные данные (показываются ТОЛЬКО если таблица не грузится)
         let data = {
-            quotes: ["Universal Settlement Layer.", "Trust Math, Not Intermediaries.", "Provable Finality via ZK."],
+            quotes: ["Universal Settlement Layer.", "Trust Math.", "Zero Knowledge."],
             spotlight: [
-                {title: "Pi Squared Whitepaper", author: "@PiSquared", img: "", tag: "Official", link: "https://pi2.network/papers"},
-                {title: "Community Spotlight", author: "@Satoshi", img: "", tag: "Community", link: "#"}
+                {title: "Example: Data not loaded", author: "System", tag: "Error", link: "#"},
+                {title: "Check Console (F12)", author: "Admin", tag: "Info", link: "#"}
             ],
-            events: [
-                {day: "15", mon: "OCT", title: "Community Call", time: "16:00 UTC", link: "#"},
-                {day: "22", mon: "OCT", title: "DevNet Workshop", time: "12:00 UTC", link: "#"}
-            ]
+            events: []
         };
-
-        // Ensure script runs after DOM load
-        document.addEventListener('DOMContentLoaded', init);
 
         async function init() {
-            initParallax();
-            renderDashboard();
-            renderHub();
+            renderQuote();
+            renderHub(); // Сначала рисуем заглушки
             
-            // Safe Particle Init
-            if(window.particlesJS) {
-                particlesJS("particles-js", {"particles":{"number":{"value":25},"color":{"value":"#7F2FFF"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":false},"move":{"speed":0.5}}});
-            }
-
-            await Promise.all([fetchData('quotes'), fetchData('spotlight'), fetchData('events')]);
-            renderDashboard();
-            renderHub();
-        }
-
-        function initParallax() {
-            const bg = document.getElementById('math-layer');
-            if(!bg) return;
-            const symbols = ['π', '∑', '∫', '√', '≈', '∅'];
-            for(let i=0; i<15; i++) {
-                const el = document.createElement('div');
-                el.classList.add('math-symbol');
-                el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-                el.style.left = Math.random() * 100 + '%';
-                el.style.top = Math.random() * 100 + '%';
-                el.style.fontSize = (Math.random() * 30 + 10) + 'px';
-                bg.appendChild(el);
-            }
-            document.addEventListener('mousemove', (e) => {
-                const x = e.clientX / window.innerWidth;
-                const y = e.clientY / window.innerHeight;
-                document.querySelectorAll('.math-symbol').forEach((el, index) => {
-                    const speed = (index % 5) + 1;
-                    el.style.transform = `translate(${x * speed * 20}px, ${y * speed * 20}px)`;
-                });
-            });
+            // Загружаем данные
+            console.log("🚀 Starting Data Fetch...");
+            await Promise.all([
+                fetchData('quotes'), 
+                fetchData('spotlight'), 
+                fetchData('events')
+            ]);
+            
+            console.log("✅ Render updated data");
+            renderAll();
         }
 
         async function fetchData(type) {
+            // Добавляем время, чтобы обойти кэш браузера
             const proxy = `https://corsproxy.io/?${encodeURIComponent(SHEET_LINKS[type])}&t=${Date.now()}`;
             try {
                 const r = await fetch(proxy);
                 if (r.ok) {
                     const txt = await r.text();
                     const parsed = parseCSV(txt);
-                    if(parsed.length > 0) data[type] = parsed;
+                    if(parsed.length > 0) {
+                        data[type] = parsed;
+                        console.log(`✅ Loaded ${type}: ${parsed.length} items`);
+                    } else {
+                        console.warn(`⚠️ Loaded ${type} but it was empty or parsing failed.`);
+                    }
+                } else {
+                    console.error(`❌ Failed to load ${type}: Server Error ${r.status}`);
                 }
-            } catch (e) { }
+            } catch (e) { 
+                console.error(`❌ Network Error for ${type}:`, e); 
+            }
         }
 
         function parseCSV(text) {
-            const lines = text.split(/\r?\n/);
+            const lines = text.split(/\r?\n/).filter(line => line.trim() !== ""); // Убираем пустые строки
             if (lines.length < 2) return [];
+            
             const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+            console.log("Headers found:", headers); // Для отладки
+
             const result = [];
             for (let i = 1; i < lines.length; i++) {
+                // Сложная регулярка для правильной обработки запятых внутри кавычек
                 const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(s => s.replace(/^"|"$/g, '').trim());
+                
+                // Пропускаем совсем пустые строки
                 if (row.length < 2) continue;
+                
                 let obj = {};
-                headers.forEach((h, index) => { obj[h] = row[index] || ""; });
+                headers.forEach((h, index) => { 
+                    obj[h] = row[index] || ""; 
+                });
                 result.push(obj);
             }
             return result;
         }
 
-        function renderDashboard() {
-            const list = Array.isArray(data.quotes[0]) ? data.quotes.map(x=>x.quote || x[0]) : data.quotes;
-            const quoteEl = document.getElementById('hero-quote');
-            if(quoteEl) quoteEl.innerText = list[Math.floor(Math.random() * list.length)] || "Math is Law.";
-            
-            if(data.events.length > 0) {
-                const ev = data.events[0];
-                document.getElementById('dash-event-title').innerText = ev.title || "Upcoming Event";
-                document.getElementById('dash-event-time').innerText = `${ev.day} ${ev.month} • ${ev.time}`;
-            }
-            if(data.spotlight.length > 0) {
-                const sp = data.spotlight[0];
-                document.getElementById('dash-spot-title').innerText = sp.title.substring(0, 30) + "...";
-                document.getElementById('dash-spot-author').innerText = sp.author;
-            }
+        function renderAll() {
+            renderQuote();
+            renderHub();
         }
 
+        // --- RENDERERS ---
         function renderHub() {
+            // 1. SPOTLIGHT
             const sCont = document.getElementById('spotlight-container');
-            if(sCont && data.spotlight && data.spotlight.length > 0) {
+            if(data.spotlight && data.spotlight.length > 0) {
+                // Сортировка: Pin вверх
+                data.spotlight.sort((a,b) => (b.pin === 'yes') - (a.pin === 'yes'));
+
                 sCont.innerHTML = data.spotlight.map(item => {
                     const img = item.image || item.img;
-                    const imgHtml = img ? `<img src="${img}" class="spot-img">` : `<div class="spot-img-container"><div class="spot-placeholder">π²</div></div>`;
+                    
+                    // Если картинки нет - красивый градиент с буквами
+                    const fallback = `<div style="width:100%; height:100%; background:linear-gradient(135deg, #F3EFFF 0%, #E0D4FF 100%); display:flex; align-items:center; justify-content:center; color:rgba(127,47,255,0.2); font-size:40px; font-weight:800;">π²</div>`;
+                    
+                    const imgHtml = img ? `<img src="${img}" class="spot-img">` : `<div class="spot-img-container">${fallback}</div>`;
+                    
+                    // Авто-теги
+                    let autoTag = item.tag;
+                    if (!autoTag && item.link) {
+                        if (item.link.includes('twitter') || item.link.includes('x.com')) autoTag = "Tweet";
+                        else if (item.link.includes('youtube')) autoTag = "Video";
+                        else autoTag = "News";
+                    }
+
                     return `
+                    <a href="${item.link || '#'}" target="_blank" style="text-decoration:none;">
                     <div class="spot-card">
-                        ${imgHtml}
+                        <div class="spot-img-container">${imgHtml}</div>
                         <div class="spot-body">
-                            <span class="spot-tag">${item.tag || "News"}</span>
+                            <span class="spot-tag">${autoTag || "Update"}</span>
                             <div class="spot-title">${item.title}</div>
-                            <a href="${item.link || '#'}" target="_blank" class="spot-link"><i class="fa-brands fa-twitter"></i> ${item.author || "Member"}</a>
+                            <div class="spot-link"><i class="fa-brands fa-twitter"></i> ${item.author || "Community"}</div>
                         </div>
-                    </div>`;
+                    </div></a>`;
                 }).join('');
             }
 
+            // 2. EVENTS
             const eCont = document.getElementById('events-container');
-            if(eCont && data.events && data.events.length > 0) {
+            if(data.events && data.events.length > 0) {
                 eCont.innerHTML = data.events.map(ev => {
-                    const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title || "Event")}&details=PiSquared+Community+Event`;
+                    const titleEnc = encodeURIComponent(ev.title || "Event");
+                    const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titleEnc}&details=PiSquared+Community+Event`;
+                    
                     return `
                     <div class="event-card">
                         <div class="date-badge">
-                            <span class="date-day">${ev.day}</span>
-                            <span class="date-month">${ev.month}</span>
+                            <span class="date-day">${ev.day || "01"}</span>
+                            <span class="date-month">${ev.month || "JAN"}</span>
                         </div>
                         <div class="event-details">
                             <div class="event-title">${ev.title}</div>
-                            <div class="event-meta"><i class="fa-regular fa-clock"></i> ${ev.time}</div>
+                            <div class="event-meta"><i class="fa-regular fa-clock"></i> ${ev.time || "TBA"}</div>
                         </div>
-                        <a href="${googleLink}" target="_blank" class="cal-btn">Join</a>
+                        <a href="${googleLink}" target="_blank" class="cal-btn">Add</a>
                     </div>`;
                 }).join('');
+            } else {
+                eCont.innerHTML = `<div style="text-align:center; color:#999; padding:20px;">No upcoming events found.</div>`;
             }
         }
 
+        // --- TABS & UI ---
         window.switchTab = (id) => {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            const btn = document.querySelector(`.nav-btn[onclick="switchTab('${id}')"]`);
-            if(btn) btn.classList.add('active');
-            
+            event.currentTarget.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            const target = document.getElementById('tab-' + id);
-            if(target) target.classList.add('active');
+            document.getElementById('tab-' + id).classList.add('active');
         }
 
+        window.showSub = (id, btn) => {
+            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('view-spotlight').style.display = 'none';
+            document.getElementById('view-events').style.display = 'none';
+            document.getElementById('view-' + id).style.display = 'block';
+            if(id === 'events') document.getElementById('view-' + id).style.display = 'flex';
+        }
+
+        window.renderQuote = () => {
+            const list = Array.isArray(data.quotes[0]) ? data.quotes.map(x=>x.quote || x[0]) : data.quotes;
+            const el = document.getElementById('quote-display');
+            if(!el) return;
+            el.style.opacity = 0;
+            setTimeout(() => {
+                el.innerText = list[Math.floor(Math.random() * list.length)] || "Math is Law.";
+                el.style.opacity = 1;
+            }, 200);
+        }
+
+        // --- ID GENERATOR ---
+        // (Оставляем тот же код генератора, он работает)
         async function generateBadge() {
             const btn = document.getElementById('generate-btn'); btn.disabled = true; btn.innerText = "Minting...";
             try {
@@ -458,34 +483,22 @@
                 ctx.clearRect(0,0,600,360);
 
                 if (role === 'Pilot') {
-                    // GOLD THEME
                     const g = ctx.createLinearGradient(0,0,600,360); g.addColorStop(0,"#1a1a1a"); g.addColorStop(1,"#000000");
                     ctx.fillStyle = g; ctx.fillRect(0,0,600,360);
                     const gold = ctx.createLinearGradient(0,0,0,360); gold.addColorStop(0,"#BF953F"); gold.addColorStop(0.5,"#FCF6BA"); gold.addColorStop(1,"#AA771C");
                     ctx.fillStyle=gold; ctx.fillRect(0,0,16,360);
                     ctx.drawImage(logoImg, 40, 40, 50, 50);
-                    
                     ctx.fillStyle="#FFD700"; ctx.font="bold 16px 'Inter'"; ctx.fillText("ELITE PILOT", 45, 110);
                     ctx.fillStyle="#FFFFFF"; ctx.font="800 40px 'Manrope'"; ctx.fillText(finalName, 45, 160);
-                    
-                    // NEW: Chip Design (Gold Gradient)
-                    ctx.fillStyle = gold; 
-                    ctx.beginPath(); ctx.roundRect(470, 40, 60, 45, 6); ctx.fill();
-                    ctx.lineWidth=2; ctx.strokeStyle="rgba(0,0,0,0.2)"; ctx.stroke();
-                    // Chip lines
-                    ctx.beginPath(); ctx.moveTo(470, 62); ctx.lineTo(530, 62); ctx.stroke();
-                    ctx.beginPath(); ctx.moveTo(500, 40); ctx.lineTo(500, 85); ctx.stroke();
-
+                    ctx.fillStyle="#EAB308"; ctx.beginPath(); ctx.roundRect(470, 40, 60, 45, 6); ctx.fill(); 
                 } else if (role === 'Contributor') {
-                    // NEON
                     const g = ctx.createLinearGradient(0,0,600,360); g.addColorStop(0,"#240b36"); g.addColorStop(1,"#0F172A");
-                    ctx.fillStyle=g; ctx.fillRect(0,0,600,360);
+                    ctx.fillStyle = g; ctx.fillRect(0,0,600,360);
                     ctx.fillStyle="#E02FFF"; ctx.fillRect(0,0,16,360);
                     ctx.drawImage(logoImg, 40, 40, 50, 50);
                     ctx.fillStyle="#E02FFF"; ctx.font="bold 16px 'Inter'"; ctx.fillText("CORE CONTRIBUTOR", 45, 110);
                     ctx.fillStyle="#FFF"; ctx.font="800 40px 'Manrope'"; ctx.fillText(finalName, 45, 160);
                 } else {
-                    // MEMBER
                     ctx.fillStyle="#F8F9FC"; ctx.fillRect(0,0,600,360);
                     ctx.strokeStyle="rgba(127, 47, 255, 0.05)"; ctx.lineWidth=1;
                     for(let i=0;i<600;i+=30){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,360);ctx.stroke();}
@@ -500,27 +513,43 @@
                 else { ctx.fillStyle="#eee"; ctx.fillRect(400,100,160,160); }
                 ctx.restore();
                 
-                ctx.beginPath(); ctx.arc(480, 180, 80, 0, Math.PI*2); ctx.lineWidth=6; 
+                ctx.beginPath(); ctx.arc(480, 180, 80, 0, Math.PI*2); ctx.lineWidth=4; 
                 ctx.strokeStyle= role==='Pilot'?'#FFD700':(role==='Contributor'?'#E02FFF':'#fff'); ctx.stroke();
 
                 ctx.textAlign="left"; 
                 ctx.fillStyle= role==='Member'?"#64748B":"#AAA"; ctx.font="500 18px 'Inter'"; ctx.fillText("@"+handle, 45, 195);
                 ctx.fillStyle = "#10B981"; ctx.fillRect(45, 270, 110, 30);
                 ctx.fillStyle = "#fff"; ctx.font="bold 12px 'Inter'"; ctx.fillText("✓ VERIFIED", 65, 290);
-                
                 const rid = Math.floor(Math.random()*90000+10000);
                 ctx.fillStyle= role==='Member'?"#CBD5E1":"#444"; ctx.font="12px 'JetBrains Mono'"; ctx.fillText(`ID: ${rid} // PI-SQUARED`, 45, 330);
 
                 const iEl = document.getElementById('final-badge');
                 iEl.src = c.toDataURL(); iEl.style.display='block';
                 document.getElementById('badge-empty').style.display='none';
-                
                 const dl = document.getElementById('dl-link');
                 dl.style.display="inline-block"; dl.href=iEl.src; dl.download=`Pi2_${finalName}.png`;
 
             } catch(e) { console.log(e); }
             finally { btn.disabled = false; btn.innerText = "Generate Identity"; }
         }
+        
+        // Polyfill for roundRect if needed (for older browsers)
+        if (CanvasRenderingContext2D.prototype.roundRect === undefined) {
+          CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.beginPath();
+            this.moveTo(x + r, y);
+            this.arcTo(x + w, y, x + w, y + h, r);
+            this.arcTo(x + w, y + h, x, y + h, r);
+            this.arcTo(x, y + h, x, y, r);
+            this.arcTo(x, y, x + w, y, r);
+            this.closePath();
+            return this;
+          };
+        }
+
+        init();
     </script>
 </body>
 </html>
