@@ -8,88 +8,70 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Particles -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- Particles (Moved to end of body for safety) -->
+    
     <style>
-        /* ... (Spatial Styles from v25) ... */
         :root {
-            --bg-page: #F3F4F6;
-            --bg-card: rgba(255, 255, 255, 0.7);
-            --text-main: #0F172A;
-            --text-sub: #64748B;
-            --brand: #7F2FFF;
-            --brand-light: #F0E7FF;
-            --border: #E2E8F0;
-            --radius: 24px;
-            --shadow: 0 20px 40px -10px rgba(127, 47, 255, 0.08);
+            --bg-page: #F8F9FC; --bg-card: #FFFFFF;
+            --text-main: #0F172A; --text-sub: #64748B;
+            --brand: #7F2FFF; --brand-light: #F6F0FF;
+            --border: #E2E8F0; --radius: 24px;
+            --shadow: 0 10px 40px -10px rgba(127, 47, 255, 0.08);
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        
         body {
             background-color: var(--bg-page);
+            background-image: radial-gradient(#E0E7FF 1px, transparent 1px);
+            background-size: 30px 30px;
             color: var(--text-main); font-family: 'Inter', sans-serif;
             height: 100vh; display: flex; align-items: center; justify-content: center;
             overflow: hidden;
         }
-
         #math-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+        #particles-js { position: absolute; top:0; left:0; width: 100%; height: 100%; z-index: 1; opacity: 0.5; pointer-events: none;}
         .math-symbol { position: absolute; color: var(--brand); opacity: 0.06; font-family: 'Times New Roman'; font-weight: bold; transition: transform 0.1s linear; }
 
         .interface {
-            position: relative; z-index: 10;
-            width: 95%; max-width: 1100px; height: 85vh;
-            background: var(--bg-card);
-            backdrop-filter: blur(40px) saturate(120%);
-            -webkit-backdrop-filter: blur(40px) saturate(120%);
-            border: 1px solid rgba(255,255,255,0.6);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            position: relative; z-index: 10; width: 95%; max-width: 1100px; height: 85vh;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px);
+            border: 1px solid #fff; border-radius: var(--radius);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
             display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* HEADER */
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 40px; border-bottom: 1px solid var(--border);
-            background: rgba(255,255,255,0.5); flex-shrink: 0;
-        }
+        /* HEADER & NAV */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); background: #fff; flex-shrink: 0; }
         .logo-group { display: flex; align-items: center; gap: 12px; }
-        .badge { background: rgba(255,255,255,0.8); color: var(--brand); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(127,47,255,0.1); }
+        .badge { background: var(--brand-light); color: var(--brand); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(127,47,255,0.1); }
         .dot { width: 6px; height: 6px; background: #10B981; border-radius: 50%; }
 
-        /* NAV */
-        nav { display: flex; justify-content: center; gap: 8px; padding: 15px 40px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.3); flex-shrink: 0; }
-        .nav-btn {
-            padding: 8px 20px; border: 1px solid transparent; background: transparent;
-            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--text-sub);
-            border-radius: 8px; cursor: pointer; transition: 0.2s ease;
-        }
-        .nav-btn:hover { color: #000; background: rgba(255,255,255,0.8); border-color: var(--border); }
+        nav { display: flex; justify-content: center; gap: 8px; padding: 15px 40px; border-bottom: 1px solid var(--border); background: #F8FAFC; flex-shrink: 0; overflow-x: auto; }
+        .nav-btn { padding: 8px 20px; border: 1px solid transparent; background: transparent; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--text-sub); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
+        .nav-btn:hover { background: #fff; color: #000; transform: translateY(-1px); }
         .nav-btn.active { background: #0F172A; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
         /* SCREEN */
         .screen { flex: 1; position: relative; overflow: hidden; }
         .tab-content { display: none; width: 100%; height: 100%; padding: 40px; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease; }
         .tab-content.active { display: flex; flex-direction: column; opacity: 1; }
-        
-        #tab-vision.active { align-items: center; justify-content: center; text-align: center; }
-        #tab-card.active { align-items: center; justify-content: flex-start; }
-        #tab-timeline.active { align-items: center; justify-content: center; }
+        #tab-vision.active { align-items: center; justify-content: center; } 
+        #tab-card.active { align-items: center; justify-content: center; } 
         #tab-uplink.active { display: block; }
 
         /* DASHBOARD */
         .dashboard-grid { display: grid; grid-template-areas: "hero hero" "event spot"; grid-template-columns: 1fr 1fr; grid-template-rows: 1.5fr 1fr; gap: 20px; height: 100%; width: 100%; max-width: 900px; margin: 0 auto; }
-        .dash-card { background: rgba(255,255,255,0.8); border: 1px solid var(--border); border-radius: 20px; padding: 30px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; transition: 0.3s; cursor: pointer; }
-        .dash-card:hover { border-color: var(--brand); box-shadow: var(--shadow); transform: translateY(-3px); background: #fff; }
-        .hero-area { grid-area: hero; text-align: center; align-items: center; background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(240,230,255,0.5) 100%); cursor: default; }
+        .dash-card { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 30px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; transition: 0.3s; cursor: pointer; }
+        .dash-card:hover { border-color: var(--brand); box-shadow: var(--shadow); transform: translateY(-3px); }
+        .hero-area { grid-area: hero; text-align: center; align-items: center; background: linear-gradient(135deg, #fff 0%, #FDFBFF 100%); cursor: default; }
         .hero-label { font-size: 11px; font-weight: 700; color: var(--brand); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; }
-        .hero-quote { font-family: 'Manrope'; font-size: 32px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; color: var(--text-main); }
+        .hero-quote { font-family: 'Manrope'; font-size: 28px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; color: var(--text-main); }
         .mini-card-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; }
         .mini-title { font-family: 'Manrope'; font-weight: 700; font-size: 18px; margin-bottom: 5px; }
         .mini-sub { font-size: 13px; color: var(--text-sub); display: flex; align-items: center; gap: 6px; }
+        .arrow-icon { opacity: 0.3; transform: translateX(0); transition: 0.3s; color: var(--brand); }
+        .dash-card:hover .arrow-icon { opacity: 1; transform: translateX(5px); }
 
-        /* SPOTLIGHT */
+        /* SPOTLIGHT & EVENTS */
         .spotlight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; width: 100%; }
         .spot-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column; }
         .spot-card:hover { transform: translateY(-5px); border-color: var(--brand); box-shadow: 0 10px 20px rgba(127,47,255,0.08); }
@@ -101,12 +83,12 @@
         .spot-title { font-family: 'Manrope'; font-weight: 700; font-size: 16px; margin-bottom: 10px; line-height: 1.4; flex-grow: 1; }
         .spot-link { margin-top: 15px; font-size: 12px; font-weight: 600; text-decoration: none; color: var(--text-main); display: flex; align-items: center; gap: 6px; padding-top: 15px; border-top: 1px solid #F1F5F9; }
 
-        /* EVENTS */
         .events-container { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 16px; margin: 0 auto; }
         .event-card { display: flex; align-items: center; gap: 20px; padding: 20px; background: #fff; border: 1px solid var(--border); border-radius: 16px; transition: 0.2s; }
-        .event-card:hover { border-color: var(--brand); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .event-card:hover { border-color: var(--brand); box-shadow: var(--shadow); }
         .date-badge { width: 60px; height: 60px; background: #F8FAFC; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .d-num { font-weight: 800; font-size: 18px; font-family: 'Manrope'; } .d-mon { font-size: 10px; font-weight: 700; color: var(--brand); margin-top: 2px; }
+        .date-day { font-family: 'Manrope'; font-weight: 800; font-size: 18px; line-height: 1; color: var(--text-main); }
+        .date-month { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--brand); margin-top: 2px; }
         .event-details { flex: 1; }
         .event-title { font-family: 'Manrope'; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
         .event-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; }
@@ -114,16 +96,12 @@
 
         /* GENERATOR */
         .gen-container { display: grid; grid-template-columns: 350px 1fr; gap: 40px; width: 100%; max-width: 900px; margin: 0 auto; }
-        .control-panel { background: rgba(255,255,255,0.6); padding: 30px; border-radius: 20px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 20px; height: fit-content; }
-        .input-block { display: flex; flex-direction: column; gap: 8px; }
-        .lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-sub); font-family: 'JetBrains Mono'; }
-        .inp { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Inter'; font-size: 14px; background: #fff; transition: 0.2s; }
-        .inp:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(127, 47, 255, 0.1); }
-        .role-grid { display: flex; flex-direction: column; gap: 8px; }
-        .role-tile { display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); border-radius: 10px; padding: 12px; cursor: pointer; background: #fff; transition: 0.2s; }
-        .role-tile:hover { border-color: var(--brand); background: #F8F9FC; }
-        .role-tile input { accent-color: var(--brand); width: 16px; height: 16px; }
-        .role-info { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
+        .control-panel { background: #fff; padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
+        .input-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-sub); margin-bottom: 6px; display: block; }
+        .inp { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter'; font-size: 14px; margin-bottom: 16px; }
+        .role-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+        .role-label { display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.2s; }
+        .role-label:hover { background: #F8FAFC; }
         .preview-area { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #F1F5F9; border-radius: 20px; border: 1px dashed #CBD5E1; padding: 20px; position: relative; }
         #final-badge { width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 20px 60px -10px rgba(0,0,0,0.2); display: none; }
         #badge-empty { color: #94A3B8; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -155,6 +133,7 @@
 <body>
 
     <div id="math-layer"></div>
+    <div id="particles-js"></div>
 
     <div class="interface">
         <header>
@@ -183,7 +162,7 @@
                     <div class="dash-card hero-area">
                         <div class="hero-label">Protocol Axiom</div>
                         <div id="hero-quote" class="hero-quote">Loading Intelligence...</div>
-                        <button class="btn-primary" style="width:auto; padding:10px 24px; border-radius:100px;" onclick="renderDashboard()">Next Axiom</button>
+                        <button class="nav-btn" style="border:1px solid #E2E8F0;" onclick="renderDashboard()">Next</button>
                     </div>
                     
                     <div class="dash-card" onclick="switchTab('events')" style="cursor:pointer">
@@ -230,20 +209,16 @@
                         </div>
                         <div class="input-block">
                             <span class="lbl">Select Role</span>
-                            <div class="role-grid">
-                                <label class="role-tile"><div class="role-info"><input type="radio" name="role" value="Member" checked> Member</div></label>
-                                <label class="role-tile"><div class="role-info"><input type="radio" name="role" value="Contributor"> Contributor</div></label>
-                                <label class="role-tile"><div class="role-info"><input type="radio" name="role" value="Pilot"> Pilot</div></label>
+                            <div class="role-group">
+                                <label class="role-label"><input type="radio" name="role" value="Member" checked> Member</label>
+                                <label class="role-label"><input type="radio" name="role" value="Contributor"> Contributor</label>
+                                <label class="role-label"><input type="radio" name="role" value="Pilot"> Pilot</label>
                             </div>
                         </div>
                         <button id="generate-btn" class="btn-primary" onclick="generateBadge()">Generate Identity</button>
                     </div>
-
-                    <div class="preview-area">
-                        <div id="badge-empty">
-                            <i class="fa-regular fa-id-card" style="font-size:40px; margin-bottom:10px; opacity:0.3;"></i>
-                            <div>Enter your details to generate<br>your official Community Pass</div>
-                        </div>
+                    <div style="text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                        <div id="badge-empty" style="color:#aaa; border:2px dashed #ddd; width:100%; height:250px; border-radius:16px; display:flex; align-items:center; justify-content:center;">Preview Area</div>
                         <img id="final-badge" src="" style="width:100%; border-radius:16px; box-shadow:var(--shadow); display:none;">
                         <a id="dl-link" class="btn-primary" style="margin-top:20px; display:none; width:auto; text-decoration:none;">Download PNG</a>
                     </div>
@@ -264,6 +239,15 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 6. TIMELINE -->
+            <div id="tab-timeline" class="tab-content">
+                <div class="art-soon">SOON</div>
+                <div style="text-align:center; position:relative; z-index:1;">
+                    <h2 class="h2">Genesis Sequence</h2>
+                    <p class="p">The foundation for universal verification is being laid.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -275,41 +259,71 @@
     </svg>
     <canvas id="badge-canvas" width="600" height="360"></canvas>
 
+    <!-- Load Particles Last -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
     <script>
-        // === SETTINGS ===
+        // CONFIG
         const SHEET_LINKS = {
-            // Updated GIDs based on your previous input
             quotes: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=0&single=true&output=csv", 
             spotlight: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=1051549890&single=true&output=csv",
             events: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=762300614&single=true&output=csv"
         };
 
         let data = {
-            quotes: ["Universal Settlement Layer.", "Trust Math.", "Zero Knowledge."],
-            spotlight: [],
-            events: []
+            quotes: ["Universal Settlement Layer.", "Trust Math, Not Intermediaries.", "Provable Finality via ZK."],
+            spotlight: [
+                {title: "Pi Squared Whitepaper", author: "@PiSquared", img: "", tag: "Official", link: "https://pi2.network/papers"},
+                {title: "Community Spotlight", author: "@Satoshi", img: "", tag: "Community", link: "#"}
+            ],
+            events: [
+                {day: "15", mon: "OCT", title: "Community Call", time: "16:00 UTC", link: "#"},
+                {day: "22", mon: "OCT", title: "DevNet Workshop", time: "12:00 UTC", link: "#"}
+            ]
         };
 
-        async function init() {
-            renderQuote();
-            renderDashboard(); // Render initial state
-            
-            // Particles
-            if(window.particlesJS) {
-                particlesJS("particles-js", {"particles":{"number":{"value":25},"color":{"value":"#7F2FFF"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":false},"move":{"speed":0.5}}});
-            }
+        document.addEventListener('DOMContentLoaded', init);
 
-            // Fetch Data
-            await Promise.all([
-                fetchData('quotes'), 
-                fetchData('spotlight'), 
-                fetchData('events')
-            ]);
+        async function init() {
+            // Safe Visuals Init
+            try {
+                initParallax();
+                if(window.particlesJS) {
+                    particlesJS("particles-js", {"particles":{"number":{"value":25},"color":{"value":"#7F2FFF"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":false},"move":{"speed":0.5}}});
+                }
+            } catch(e) { console.warn("Visuals error", e); }
+
+            // Data
+            renderDashboard();
+            renderHub(); 
             
-            // Re-render after data
-            renderQuote();
+            // Fetch
+            await Promise.all([fetchData('quotes'), fetchData('spotlight'), fetchData('events')]);
             renderDashboard();
             renderHub();
+        }
+
+        function initParallax() {
+            const bg = document.getElementById('math-layer');
+            if(!bg) return;
+            const symbols = ['π', '∑', '∫', '√', '≈', '∅'];
+            for(let i=0; i<15; i++) {
+                const el = document.createElement('div');
+                el.classList.add('math-symbol');
+                el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                el.style.left = Math.random() * 100 + '%';
+                el.style.top = Math.random() * 100 + '%';
+                el.style.fontSize = (Math.random() * 30 + 10) + 'px';
+                bg.appendChild(el);
+            }
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                document.querySelectorAll('.math-symbol').forEach((el, index) => {
+                    const speed = (index % 5) + 1;
+                    el.style.transform = `translate(${x * speed * 20}px, ${y * speed * 20}px)`;
+                });
+            });
         }
 
         async function fetchData(type) {
@@ -318,94 +332,55 @@
                 const r = await fetch(proxy);
                 if (r.ok) {
                     const txt = await r.text();
-                    
-                    // Special parser for Quotes (simple list) vs Others (key-value)
-                    if (type === 'quotes') {
-                        // Just split by new lines for quotes
-                        const lines = txt.split(/\r?\n/).filter(l => l.length > 5);
-                        if(lines.length > 0) data.quotes = lines;
-                    } else {
-                        // Standard CSV parser for Events/Spotlight
-                        const parsed = parseCSV(txt);
-                        if(parsed.length > 0) data[type] = parsed;
-                    }
-                    console.log(`✅ Loaded ${type}`);
+                    const parsed = parseCSV(txt);
+                    if(parsed.length > 0) data[type] = parsed;
                 }
-            } catch (e) { console.error(`Failed ${type}`, e); }
+            } catch (e) { }
         }
 
         function parseCSV(text) {
-            const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+            const lines = text.split(/\r?\n/);
             if (lines.length < 2) return [];
             const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-            
-            return lines.slice(1).map(line => {
-                const row = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(s => s.replace(/^"|"$/g, '').trim());
+            const result = [];
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(s => s.replace(/^"|"$/g, '').trim());
+                if (row.length < 2) continue;
                 let obj = {};
-                headers.forEach((h, i) => obj[h] = row[i] || "");
-                return obj;
-            });
+                headers.forEach((h, index) => { obj[h] = row[index] || ""; });
+                result.push(obj);
+            }
+            return result;
         }
 
         function renderDashboard() {
-            // 1. Quote
-            // Handle quotes array being simple strings OR objects
-            const rawQuote = data.quotes[Math.floor(Math.random() * data.quotes.length)];
-            // If the CSV parser returned objects (row 1 header), extract the first value, otherwise use string
-            const quoteText = (typeof rawQuote === 'object') ? Object.values(rawQuote)[0] : rawQuote;
+            const list = Array.isArray(data.quotes[0]) ? data.quotes.map(x=>x.quote || x[0]) : data.quotes;
+            const quoteEl = document.getElementById('hero-quote');
+            if(quoteEl) quoteEl.innerText = list[Math.floor(Math.random() * list.length)] || "Math is Law.";
             
-            const qEl = document.getElementById('hero-quote');
-            if(qEl) qEl.innerText = quoteText || "Math is Law.";
-            
-            // 2. Event Widget
-            if(data.events && data.events.length > 0) {
+            if(data.events.length > 0) {
                 const ev = data.events[0];
                 document.getElementById('dash-event-title').innerText = ev.title || "Upcoming Event";
                 document.getElementById('dash-event-time').innerHTML = `<i class="fa-regular fa-clock"></i> ${ev.day} ${ev.month} • ${ev.time}`;
-            } else {
-                document.getElementById('dash-event-title').innerText = "No upcoming events";
-                document.getElementById('dash-event-time').innerText = "Check back later";
             }
-
-            // 3. Spotlight Widget
-            if(data.spotlight && data.spotlight.length > 0) {
-                // Sort by pin if available
-                const sorted = [...data.spotlight].sort((a,b) => (b.pin === 'yes') - (a.pin === 'yes'));
-                const sp = sorted[0];
-                
-                document.getElementById('dash-spot-title').innerText = (sp.title || "").substring(0, 35) + "...";
-                document.getElementById('dash-spot-author').innerHTML = `<i class="fa-brands fa-twitter"></i> ${sp.author || "Member"}`;
-            } else {
-                 document.getElementById('dash-spot-title').innerText = "Join the Community";
-                 document.getElementById('dash-spot-author').innerText = "@PiSquared";
+            if(data.spotlight.length > 0) {
+                const sp = data.spotlight[0];
+                document.getElementById('dash-spot-title').innerText = sp.title.substring(0, 30) + "...";
+                document.getElementById('dash-spot-author').innerHTML = `<i class="fa-brands fa-twitter"></i> ${sp.author}`;
             }
-        }
-
-        function renderQuote() {
-            renderDashboard(); // Re-use dashboard render logic
         }
 
         function renderHub() {
-            // Spotlight Render
             const sCont = document.getElementById('spotlight-container');
             if(sCont && data.spotlight.length > 0) {
-                const sorted = [...data.spotlight].sort((a,b) => (b.pin === 'yes') - (a.pin === 'yes'));
-                sCont.innerHTML = sorted.map(item => {
+                sCont.innerHTML = data.spotlight.map(item => {
                     const img = item.image || item.img;
                     const imgHtml = img ? `<img src="${img}" class="spot-img">` : `<div class="spot-img-container"><div class="spot-placeholder">π²</div></div>`;
-                    
-                    let autoTag = item.tag;
-                    if (!autoTag && item.link) {
-                        if (item.link.includes('twitter')) autoTag = "Tweet";
-                        else if (item.link.includes('youtu')) autoTag = "Video";
-                        else autoTag = "News";
-                    }
-
                     return `
                     <div class="spot-card">
                         ${imgHtml}
                         <div class="spot-body">
-                            <span class="spot-tag">${autoTag || "Update"}</span>
+                            <span class="spot-tag">${item.tag || "News"}</span>
                             <div class="spot-title">${item.title}</div>
                             <a href="${item.link || '#'}" target="_blank" class="spot-link"><i class="fa-brands fa-twitter"></i> ${item.author || "Member"}</a>
                         </div>
@@ -413,11 +388,10 @@
                 }).join('');
             }
 
-            // Events Render
             const eCont = document.getElementById('events-container');
             if(eCont && data.events.length > 0) {
                 eCont.innerHTML = data.events.map(ev => {
-                    const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title || "Event")}&details=PiSquared+Event`;
+                    const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title || "Event")}&details=PiSquared+Community+Event`;
                     return `
                     <div class="event-card">
                         <div class="date-badge">
@@ -434,7 +408,6 @@
             }
         }
 
-        // TABS
         window.switchTab = (id) => {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             event.currentTarget.classList.add('active');
@@ -442,18 +415,8 @@
             document.getElementById('tab-' + id).classList.add('active');
         }
 
-        window.showSub = (id, btn) => {
-            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('view-spotlight').style.display = 'none';
-            document.getElementById('view-events').style.display = 'none';
-            document.getElementById('view-' + id).style.display = 'block';
-            if(id === 'events') document.getElementById('view-' + id).style.display = 'flex';
-        }
-        
-        // --- ID GENERATOR (UNCHANGED) ---
         async function generateBadge() {
-            const btn = document.getElementById('generate-btn'); btn.disabled = true; btn.innerText = "Processing...";
+            const btn = document.getElementById('generate-btn'); btn.disabled = true; btn.innerText = "Minting...";
             try {
                 const handle = document.getElementById('twitter-handle').value.replace('@','').trim();
                 const dName = document.getElementById('display-name').value.trim();
@@ -482,15 +445,24 @@
                 ctx.clearRect(0,0,600,360);
 
                 if (role === 'Pilot') {
+                    // GOLD THEME
                     const g = ctx.createLinearGradient(0,0,600,360); g.addColorStop(0,"#1a1a1a"); g.addColorStop(1,"#000000");
                     ctx.fillStyle = g; ctx.fillRect(0,0,600,360);
                     const gold = ctx.createLinearGradient(0,0,0,360); gold.addColorStop(0,"#BF953F"); gold.addColorStop(0.5,"#FCF6BA"); gold.addColorStop(1,"#AA771C");
                     ctx.fillStyle=gold; ctx.fillRect(0,0,16,360);
                     ctx.drawImage(logoImg, 40, 40, 50, 50);
+                    
                     ctx.fillStyle="#FFD700"; ctx.font="bold 16px 'Inter'"; ctx.fillText("ELITE PILOT", 45, 110);
                     ctx.fillStyle="#FFFFFF"; ctx.font="800 40px 'Manrope'"; ctx.fillText(finalName, 45, 160);
+                    
+                    // Chip Design
                     ctx.fillStyle="#EAB308"; ctx.beginPath(); ctx.roundRect(470, 40, 60, 45, 6); ctx.fill(); 
+                    ctx.lineWidth=2; ctx.strokeStyle="rgba(0,0,0,0.2)"; ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(470, 62); ctx.lineTo(530, 62); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(500, 40); ctx.lineTo(500, 85); ctx.stroke();
+
                 } else if (role === 'Contributor') {
+                    // DARK NEON
                     const g = ctx.createLinearGradient(0,0,600,360); g.addColorStop(0,"#240b36"); g.addColorStop(1,"#0F172A");
                     ctx.fillStyle = g; ctx.fillRect(0,0,600,360);
                     ctx.fillStyle="#E02FFF"; ctx.fillRect(0,0,16,360);
@@ -498,6 +470,7 @@
                     ctx.fillStyle="#E02FFF"; ctx.font="bold 16px 'Inter'"; ctx.fillText("CORE CONTRIBUTOR", 45, 110);
                     ctx.fillStyle="#FFF"; ctx.font="800 40px 'Manrope'"; ctx.fillText(finalName, 45, 160);
                 } else {
+                    // MEMBER
                     ctx.fillStyle="#F8F9FC"; ctx.fillRect(0,0,600,360);
                     ctx.strokeStyle="rgba(127, 47, 255, 0.05)"; ctx.lineWidth=1;
                     for(let i=0;i<600;i+=30){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,360);ctx.stroke();}
@@ -531,9 +504,22 @@
             } catch(e) { console.log(e); }
             finally { btn.disabled = false; btn.innerText = "Generate Identity"; }
         }
-
-        // Init
-        document.addEventListener('DOMContentLoaded', init);
+        
+        // Polyfill for roundRect
+        if (CanvasRenderingContext2D.prototype.roundRect === undefined) {
+          CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.beginPath();
+            this.moveTo(x + r, y);
+            this.arcTo(x + w, y, x + w, y + h, r);
+            this.arcTo(x + w, y + h, x, y + h, r);
+            this.arcTo(x, y + h, x, y, r);
+            this.arcTo(x, y, x + w, y, r);
+            this.closePath();
+            return this;
+          };
+        }
     </script>
 </body>
 </html>
