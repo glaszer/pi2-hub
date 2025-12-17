@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi² | Community Ecosystem</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Particles -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+        :root {
+            --bg-page: #F8F9FC; --bg-card: #FFFFFF;
+            --text-main: #0F172A; --text-sub: #64748B;
+            --brand: #7F2FFF; --brand-light: #F6F0FF;
+            --border: #E2E8F0; --radius: 24px;
+            --shadow: 0 10px 40px -10px rgba(127, 47, 255, 0.08);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        body {
+            background-color: var(--bg-page);
+            background-image: radial-gradient(#E0E7FF 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--text-main); font-family: 'Inter', sans-serif;
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        #math-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+        .math-symbol { position: absolute; color: var(--brand); opacity: 0.06; font-family: 'Times New Roman'; font-weight: bold; transition: transform 0.1s linear; }
+
+        .interface {
+            position: relative; z-index: 10; width: 95%; max-width: 1100px; height: 85vh;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px);
+            border: 1px solid #fff; border-radius: var(--radius);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        /* HEADER */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); background: #fff; flex-shrink: 0; }
+        .logo-group { display: flex; align-items: center; gap: 12px; }
+        .badge { background: var(--brand-light); color: var(--brand); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(127,47,255,0.1); }
+        .dot { width: 6px; height: 6px; background: #10B981; border-radius: 50%; }
+
+        /* NAV */
+        nav { display: flex; justify-content: center; gap: 8px; padding: 12px 40px; border-bottom: 1px solid var(--border); background: #F8FAFC; flex-shrink: 0; }
+        .nav-btn {
+            padding: 8px 20px; border: 1px solid transparent; background: transparent;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--text-sub);
+            border-radius: 8px; cursor: pointer; transition: 0.2s ease;
+        }
+        .nav-btn:hover { color: #000; background: #fff; border-color: var(--border); }
+        .nav-btn.active { background: #0F172A; color: #fff; border-color: #0F172A; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* SCREEN */
+        .screen { flex: 1; position: relative; overflow: hidden; }
+        .tab-content { display: none; width: 100%; height: 100%; padding: 40px; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease; }
+        .tab-content.active { display: flex; flex-direction: column; opacity: 1; }
+        #tab-vision.active, #tab-card.active, #tab-timeline.active { align-items: center; justify-content: center; text-align: center; }
+        #tab-uplink.active { display: block; }
+
+        /* DASHBOARD */
+        .dashboard-grid { display: grid; grid-template-areas: "hero hero" "event spot"; grid-template-columns: 1fr 1fr; grid-template-rows: 1.5fr 1fr; gap: 20px; height: 100%; width: 100%; max-width: 900px; margin: 0 auto; }
+        .dash-card { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 30px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; transition: 0.3s; cursor: pointer; }
+        .dash-card:hover { border-color: var(--brand); box-shadow: var(--shadow); transform: translateY(-3px); }
+        .hero-area { grid-area: hero; text-align: center; align-items: center; background: linear-gradient(135deg, #fff 0%, #FDFBFF 100%); cursor: default; }
+        .hero-label { font-size: 11px; font-weight: 700; color: var(--brand); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; }
+        .hero-quote { font-family: 'Manrope'; font-size: 28px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; color: var(--text-main); }
+        .mini-card-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .mini-title { font-family: 'Manrope'; font-weight: 700; font-size: 18px; margin-bottom: 5px; }
+        .mini-sub { font-size: 13px; color: var(--text-sub); display: flex; align-items: center; gap: 6px; }
+        .arrow-icon { opacity: 0.3; transform: translateX(0); transition: 0.3s; color: var(--brand); }
+        .dash-card:hover .arrow-icon { opacity: 1; transform: translateX(5px); }
+
+        /* HUB */
+        .sub-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-shrink: 0;}
+        .sub-btn { padding: 6px 16px; font-size: 12px; font-family: 'JetBrains Mono'; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; color: var(--text-sub); transition: 0.2s; }
+        .sub-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+        .spotlight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; width: 100%; }
+        .spot-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column; }
+        .spot-card:hover { transform: translateY(-5px); border-color: var(--brand); box-shadow: 0 10px 20px rgba(127,47,255,0.08); }
+        /* Smart Pinned logic applied via JS */
+        .spot-card.pinned { grid-column: span 2; grid-row: span 2; }
+        
+        .spot-img-container { width: 100%; height: 160px; background: #F8FAFC; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border); overflow: hidden; }
+        .spot-card.pinned .spot-img-container { height: 300px; }
+        
+        .spot-img { width: 100%; height: 100%; object-fit: cover; }
+        .spot-placeholder { font-size: 40px; color: #CBD5E1; font-family: serif; font-style: italic; }
+        .spot-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .spot-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .spot-tag { font-family: 'JetBrains Mono'; font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--brand); background: var(--brand-light); padding: 4px 8px; border-radius: 4px; display: inline-block; }
+        .spot-title { font-family: 'Manrope'; font-weight: 700; font-size: 16px; margin-bottom: 10px; line-height: 1.4; flex-grow: 1; }
+        .spot-card.pinned .spot-title { font-size: 24px; }
+        .spot-link { margin-top: 15px; font-size: 12px; font-weight: 600; text-decoration: none; color: var(--text-main); display: flex; align-items: center; gap: 6px; padding-top: 15px; border-top: 1px solid #F1F5F9; }
+
+        .events-container { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 16px; margin: 0 auto; }
+        .event-card { display: flex; align-items: center; gap: 20px; padding: 20px; background: #fff; border: 1px solid var(--border); border-radius: 16px; transition: 0.2s; }
+        .event-card:hover { border-color: var(--brand); box-shadow: var(--shadow); }
+        .date-badge { width: 60px; height: 60px; background: #F8FAFC; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .d-num { font-weight: 800; font-size: 18px; font-family: 'Manrope'; } .d-mon { font-size: 10px; font-weight: 700; color: var(--brand); margin-top: 2px; }
+        .event-details { flex: 1; }
+        .event-title { font-family: 'Manrope'; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+        .event-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; }
+        .cal-btn { background: #0F172A; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; }
+
+        /* GENERATOR */
+        .gen-container { display: grid; grid-template-columns: 350px 1fr; gap: 40px; width: 100%; max-width: 900px; margin: 0 auto; }
+        .control-panel { background: #fff; padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
+        .input-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-sub); margin-bottom: 6px; display: block; }
+        .inp { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter'; font-size: 14px; margin-bottom: 16px; }
+        .role-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+        .role-label { display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.2s; }
+        .role-label:hover { background: #F8FAFC; }
+        .preview-area { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #F1F5F9; border-radius: 20px; border: 1px dashed #CBD5E1; padding: 20px; position: relative; }
+        #final-badge { width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 20px 60px -10px rgba(0,0,0,0.2); display: none; }
+        #badge-empty { color: #94A3B8; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+        /* UPLINK */
+        .uplink-grid { display: grid; grid-template-columns: 260px 1fr; gap: 20px; height: 100%; width: 100%; max-width: 1000px; margin: 0 auto; }
+        .link-btn { display: flex; align-items: center; gap: 12px; padding: 16px; background: #fff; border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: var(--text-main); margin-bottom: 12px; transition: 0.2s; }
+        .link-btn:hover { border-color: var(--brand); transform: translateX(4px); }
+        .link-icon { width: 32px; height: 32px; background: var(--brand-light); color: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .twitter-embed { background:#fff; border:1px solid var(--border); border-radius:16px; overflow:hidden; height:100%; position: relative;}
+
+        /* TIMELINE */
+        .art-soon { font-family: 'Manrope'; font-weight: 800; font-size: 160px; line-height: 0.8; background: linear-gradient(180deg, #F3EFFF 0%, rgba(255,255,255,0) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; pointer-events: none; margin-bottom: -60px; position: relative; z-index: 0; }
+
+        .btn-primary { background: #000; color: #fff; width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover:not(:disabled) { background: #222; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 900px) {
+            .dashboard-grid, .uplink-grid, .gen-container { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; display: flex; flex-direction: column; }
+            .twitter-embed { display: none; }
+            .interface { height: auto; min-height: 100vh; border-radius: 0; width: 100%; margin: 0;}
+            #quote-display { font-size: 24px; }
+            .art-soon { font-size: 100px; }
+        }
+        #badge-canvas { display: none; }
+        #logo-svg-template { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="math-layer"></div>
+
+    <div class="interface">
+        <header>
+            <div class="logo-group">
+                <svg width="32" height="32" viewBox="0 0 100 100" style="border-radius:8px; background:black; padding:4px;">
+                  <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-size="60" fill="white" font-family="serif" font-style="italic">π</text>
+                  <text x="75%" y="25%" dominant-baseline="central" text-anchor="middle" font-size="40" fill="white" font-weight="bold">2</text>
+                </svg>
+                <div style="font-family:'Manrope'; font-weight:800; font-size:20px;">Pi Squared</div>
+            </div>
+            <div class="badge"><div class="dot"></div>Community Hub</div>
+        </header>
+
+        <nav>
+            <button class="nav-btn active" onclick="switchTab('vision')">Dashboard</button>
+            <button class="nav-btn" onclick="switchTab('spotlight')">Hall of Fame</button>
+            <button class="nav-btn" onclick="switchTab('events')">Events</button>
+            <button class="nav-btn" onclick="switchTab('card')">ID Pass</button>
+            <button class="nav-btn" onclick="switchTab('uplink')">Uplink</button>
+        </nav>
+
+        <div class="screen">
+            <!-- 1. DASHBOARD -->
+            <div id="tab-vision" class="tab-content active">
+                <div class="dashboard-grid">
+                    <div class="dash-card hero-area">
+                        <div class="hero-label">Protocol Axiom</div>
+                        <div id="hero-quote" class="hero-quote">Loading Intelligence...</div>
+                        <button class="nav-btn" style="border:1px solid #E2E8F0;" onclick="renderDashboard()">Next</button>
+                    </div>
+                    
+                    <div class="dash-card" onclick="switchTab('events')" style="cursor:pointer">
+                        <div class="mini-card-label"><span>Next Event</span> <i class="fa-solid fa-arrow-right arrow-icon" style="opacity:0.3"></i></div>
+                        <div id="dash-event-title" class="mini-title">Loading...</div>
+                        <div id="dash-event-time" class="mini-sub" style="margin-top:10px; color:var(--text-sub)"></div>
+                    </div>
+
+                    <div class="dash-card" onclick="switchTab('spotlight')" style="cursor:pointer">
+                        <div class="mini-card-label"><span>Featured</span> <i class="fa-solid fa-arrow-right arrow-icon" style="opacity:0.3"></i></div>
+                        <div id="dash-spot-title" class="mini-title">Loading...</div>
+                        <div id="dash-spot-author" class="mini-sub" style="margin-top:10px; color:var(--text-sub)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. HALL OF FAME -->
+            <div id="tab-spotlight" class="tab-content">
+                <div id="spotlight-container" class="spotlight-grid">
+                    <div style="grid-column:1/-1; text-align:center; color:#999;">Loading Data from GitHub...</div>
+                </div>
+            </div>
+
+            <!-- 3. EVENTS -->
+            <div id="tab-events" class="tab-content">
+                <div id="events-container" class="events-container">
+                    <div style="text-align:center; color:#999;">Loading Events...</div>
+                </div>
+            </div>
+
+            <!-- 4. GENERATOR -->
+            <div id="tab-card" class="tab-content">
+                <div class="gen-container">
+                    <div class="control-panel">
+                        <div style="font-family:'Manrope'; font-weight:800; font-size:20px; margin-bottom:10px;">Generate Pass</div>
+                        
+                        <div class="input-block">
+                            <span class="lbl">Twitter Handle</span>
+                            <input type="text" id="twitter-handle" class="inp" placeholder="e.g. PiSquared">
+                        </div>
+                        <div class="input-block">
+                            <span class="lbl">Display Name</span>
+                            <input type="text" id="display-name" class="inp" placeholder="e.g. Satoshi">
+                        </div>
+                        <div class="input-block">
+                            <span class="lbl">Select Role</span>
+                            <div class="role-group">
+                                <label class="role-label"><input type="radio" name="role" value="Member" checked> Member</label>
+                                <label class="role-label"><input type="radio" name="role" value="Contributor"> Contributor</label>
+                                <label class="role-label"><input type="radio" name="role" value="Pilot"> Pilot</label>
+                            </div>
+                        </div>
+                        <button id="generate-btn" class="btn-primary" onclick="generateBadge()">Generate Identity</button>
+                    </div>
+                    <div class="preview-area">
+                        <div id="badge-empty">
+                            <i class="fa-regular fa-id-card" style="font-size:40px; margin-bottom:10px; opacity:0.3;"></i>
+                            <div>Enter your details to generate<br>your official Community Pass</div>
+                        </div>
+                        <img id="final-badge" src="" style="width:100%; border-radius:16px; box-shadow:var(--shadow); display:none;">
+                        <a id="dl-link" class="btn-primary" style="margin-top:20px; display:none; width:auto; text-decoration:none;">Download PNG</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. UPLINK -->
+            <div id="tab-uplink" class="tab-content">
+                <div class="uplink-grid">
+                    <div>
+                        <a href="https://pi2.network/" target="_blank" class="link-btn"><div class="link-icon"><i class="fa-solid fa-globe"></i></div><div><div style="font-weight:700;">Official Site</div></div></a>
+                        <a href="https://docs.pi2.network/" target="_blank" class="link-btn"><div class="link-icon"><i class="fa-solid fa-book-open"></i></div><div><div style="font-weight:700;">Documentation</div></div></a>
+                        <a href="https://discord.com/invite/NdBJBZMz4e" target="_blank" class="link-btn"><div class="link-icon"><i class="fa-brands fa-discord"></i></div><div><div style="font-weight:700;">Discord</div></div></a>
+                    </div>
+                    <div class="twitter-embed">
+                        <a class="twitter-timeline" data-height="600" data-theme="light" href="https://twitter.com/PiSquared?ref_src=twsrc%5Etfw">Loading Tweets...</a> 
+                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. TIMELINE -->
+            <div id="tab-timeline" class="tab-content">
+                <div class="art-soon">SOON</div>
+                <div style="text-align:center; position:relative; z-index:1;">
+                    <h2 class="h2">Genesis Sequence</h2>
+                    <p class="p">The foundation for universal verification is being laid.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Assets -->
+    <svg id="logo-svg-template" width="100" height="100" viewBox="0 0 100 100" style="display: none;">
+        <rect width="100" height="100" rx="20" fill="black"/>
+        <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-size="60" fill="white" font-family="serif" font-style="italic">π</text>
+        <text x="75%" y="25%" dominant-baseline="central" text-anchor="middle" font-size="40" fill="white" font-weight="bold">2</text>
+    </svg>
+    <canvas id="badge-canvas" width="600" height="360"></canvas>
+
+    <script>
+        // === CONFIGURATION ===
+        // ВАЖНО: Замените эту ссылку на вашу RAW ссылку с GitHub
+        // Пример: https://raw.githubusercontent.com/ВАШ_НИК/ВАШ_РЕПО/main/database.json
+        const DB_URL = "https://raw.githubusercontent.com/glaszer/pi2-hub/refs/heads/main/database.json"; 
+
+        // Данные по умолчанию (показываются если JSON недоступен)
+        let data = {
+            quotes: ["Universal Settlement Layer.", "Trust Math, Not Intermediaries.", "Provable Finality via ZK."],
+            spotlight: [
+                {title: "Pi Squared Whitepaper", author: "@PiSquared", img: "", tag: "Official", link: "https://pi2.network/papers", pin: "yes"},
+                {title: "Community Spotlight", author: "@Satoshi", img: "", tag: "Community", link: "#", pin: "no"}
+            ],
+            events: [
+                {day: "15", month: "OCT", title: "Community Call", time: "16:00 UTC", link: "#"},
+                {day: "22", month: "OCT", title: "DevNet Workshop", time: "12:00 UTC", link: "#"}
+            ]
+        };
+
+        // --- INIT ---
+        async function init() {
+            initParallax();
+            renderDashboard();
+            renderHub(); 
+            particlesJS("particles-js", {"particles":{"number":{"value":25},"color":{"value":"#7F2FFF"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":false},"move":{"speed":0.5}}});
+            
+            // Загрузка JSON с GitHub
+            try {
+                const r = await fetch(DB_URL);
+                if(r.ok) {
+                    const jsonData = await r.json();
+                    // Обновляем данные если JSON валиден
+                    if(jsonData.quotes) data.quotes = jsonData.quotes;
+                    if(jsonData.spotlight) data.spotlight = jsonData.spotlight;
+                    if(jsonData.events) data.events = jsonData.events;
+                    // Перерисовываем
+                    renderDashboard();
+                    renderHub();
+                }
+            } catch(e) {
+                console.log("Using default/fallback data. (Check DB_URL)");
+            }
+        }
+
+        // --- RENDERERS ---
+        function renderDashboard() {
+            const list = data.quotes;
+            document.getElementById('hero-quote').innerText = list[Math.floor(Math.random() * list.length)] || "Math is Law.";
+            
+            if(data.events && data.events.length > 0) {
+                const ev = data.events[0];
+                document.getElementById('dash-event-title').innerText = ev.title || "Upcoming Event";
+                document.getElementById('dash-event-time').innerText = `${ev.day} ${ev.month} • ${ev.time}`;
+            }
+            if(data.spotlight && data.spotlight.length > 0) {
+                const sp = data.spotlight[0]; // Assuming first is sorted
+                document.getElementById('dash-spot-title').innerText = sp.title.substring(0, 30) + "...";
+                document.getElementById('dash-spot-author').innerText = sp.author;
+            }
+        }
+
+        function renderHub() {
+            // SPOTLIGHT (Smart Content)
+            const sCont = document.getElementById('spotlight-container');
+            if(data.spotlight && data.spotlight.length > 0) {
+                // Sort pinned first
+                const sorted = [...data.spotlight].sort((a,b) => (b.pin === 'yes') - (a.pin === 'yes'));
+                
+                sCont.innerHTML = sorted.map(item => {
+                    const img = item.img;
+                    const imgHtml = img ? `<img src="${img}" class="spot-img">` : `<div class="spot-img-container"><div class="spot-placeholder">π²</div></div>`;
+                    
+                    // Auto-tag logic
+                    let autoTag = item.tag;
+                    if (!autoTag && item.link) {
+                        if (item.link.includes('twitter')) autoTag = "Tweet";
+                        else if (item.link.includes('youtube')) autoTag = "Video";
+                        else autoTag = "Update";
+                    }
+
+                    const pinClass = (item.pin === 'yes') ? 'grid-column: span 2; grid-row: span 2;' : '';
+                    
+                    // Inline style for grid span if pinned (simpler than CSS class for dynamic content)
+                    return `
+                    <div class="spot-card" style="${pinClass}">
+                        ${img ? `<div class="spot-img-container" style="${item.pin==='yes'?'height:300px':''}"><img src="${img}" class="spot-img"></div>` : `<div class="spot-img-container" style="${item.pin==='yes'?'height:300px':''}"><div class="spot-placeholder">π²</div></div>`}
+                        <div class="spot-body">
+                            <div class="spot-header" style="display:flex; justify-content:space-between;">
+                                <span class="spot-tag">${autoTag || "News"}</span>
+                                ${item.pin === 'yes' ? '<i class="fa-solid fa-thumbtack" style="color:#F59E0B"></i>' : ''}
+                            </div>
+                            <div class="spot-title" style="${item.pin==='yes'?'font-size:24px':''}">${item.title}</div>
+                            <a href="${item.link || '#'}" target="_blank" class="spot-link"><i class="fa-brands fa-twitter"></i> ${item.author || "Member"}</a>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            // EVENTS
+            const eCont = document.getElementById('events-container');
+            if(data.events && data.events.length > 0) {
+                eCont.innerHTML = data.events.map(ev => {
+                    const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title || "Event")}&details=PiSquared+Event`;
+                    return `
+                    <div class="event-card">
+                        <div class="date-badge">
+                            <span class="date-day">${ev.day}</span>
+                            <span class="date-month">${ev.month}</span>
+                        </div>
+                        <div class="event-details">
+                            <div class="event-title">${ev.title}</div>
+                            <div class="event-meta"><i class="fa-regular fa-clock"></i> ${ev.time}</div>
+                        </div>
+                        <a href="${googleLink}" target="_blank" class="cal-btn">Join</a>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        // --- UI LOGIC ---
+        function switchTab(id) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
+        }
+
+        function initParallax() {
+            const bg = document.getElementById('math-layer');
+            const symbols = ['π', '∑', '∫', '√', '≈', '∅'];
+            for(let i=0; i<15; i++) {
+                const el = document.createElement('div');
+                el.classList.add('math-symbol');
+                el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                el.style.left = Math.random() * 100 + '%';
+                el.style.top = Math.random() * 100 + '%';
+                el.style.fontSize = (Math.random() * 30 + 10) + 'px';
+                bg.appendChild(el);
+            }
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                document.querySelectorAll('.math-symbol').forEach((el, index) => {
+                    const speed = (index % 5) + 1;
+                    el.style.transform = `translate(${x * speed * 20}px, ${y * speed * 20}px)`;
+                });
+            });
+        }
+
+        // --- ID GENERATOR ---
+        async function generateBadge() {
+            const btn = document.getElementById('generate-btn'); btn.disabled = true; btn.innerText = "Processing...";
+            try {
+                const handle = document.getElementById('twitter-handle').value.replace('@','').trim();
+                const dName = document.getElementById('display-name').value.trim();
+                const role = document.querySelector('input[name="role"]:checked').value;
+                const finalName = dName || handle || "Member";
+
+                let avatar = null;
+                if(handle) {
+                    try {
+                        const img = new Image(); img.crossOrigin="Anonymous";
+                        await new Promise((res, rej) => {
+                            img.onload = res; img.onerror = rej;
+                            img.src = `https://wsrv.nl/?url=https://unavatar.io/twitter/${handle}&output=png`;
+                        });
+                        avatar = img;
+                    } catch(e){}
+                }
+
+                const logoSVG = document.getElementById('logo-svg-template');
+                const svgString = new XMLSerializer().serializeToString(logoSVG);
+                const logoImg = new Image();
+                logoImg.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+                await new Promise(r => logoImg.onload = r);
+
+                const c = document.getElementById('badge-canvas'); const ctx = c.getContext('2d');
+                ctx.clearRect(0,0,600,360);
+
+                if (role === 'Pilot') {
+                    // GOLD THEME
+                    const g = ctx.createLinearGradient(0,0,600,360); g.addColorStop(0,"#1a1a1a"); g.addColorStop(1,"#000000");
+                    ctx.fillStyle = g; ctx.fillRect(0,0,600,360);
+                    const gold = ctx.createLinearGradient(0,0,0,360); gold.addColorStop(0,"#BF953F"); gold.addColorStop(0.5,"#FCF6BA"); gold.addColorStop(1,"#AA771C");
+                    ctx.fillStyle=gold; ctx.fillRect(0,0,16,360);
+                    ctx.drawImage(logoImg, 40, 40, 50, 50);
+                    
+                    ctx.fillStyle="#FFD700"; ctx.font="bold 16px 'Inter'"; ctx.fillText("ELITE PILOT", 45, 110);
+                    ctx.fillStyle="#FFFFFF"; ctx.font="800 40px 'Manrope'"; ctx.fillText(finalName, 45, 160);
+                    
+                    // Chip Design
+                    ctx.fillStyle="#EAB308"; ctx.beginPath(); ctx.roundRect(470, 40, 60, 45, 6); ctx.fill(); 
+                    ctx.strokeStyle="rgba(0,0,0,0.2)"; ctx.lineWidth=2; ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(470, 62); ctx.lineTo(530, 62); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(500, 40); ctx.lineTo(500, 85); ctx.stroke();
+
+                } else if (role === 'Contributor') {
+                    // DARK NEON
+                    const g = ctx.createLinearGradient(0,0,600,360); g.addColorStop(0,"#240b36"); g.addColorStop(1,"#0F172A");
+                    ctx.fillStyle = g; ctx.fillRect(0,0,600,360);
+                    ctx.fillStyle="#E02FFF"; ctx.fillRect(0,0,16,360);
+                    ctx.drawImage(logoImg, 40, 40, 50, 50);
+                    ctx.fillStyle="#E02FFF"; ctx.font="bold 16px 'Inter'"; ctx.fillText("CORE CONTRIBUTOR", 45, 110);
+                    ctx.fillStyle="#FFF"; ctx.font="800 40px 'Manrope'"; ctx.fillText(finalName, 45, 160);
+
+                } else {
+                    // MEMBER
+                    ctx.fillStyle="#F8F9FC"; ctx.fillRect(0,0,600,360);
+                    ctx.strokeStyle="rgba(127, 47, 255, 0.05)"; ctx.lineWidth=1;
+                    for(let i=0;i<600;i+=30){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,360);ctx.stroke();}
+                    ctx.fillStyle="#7F2FFF"; ctx.fillRect(0,0,16,360);
+                    ctx.drawImage(logoImg, 40, 40, 50, 50);
+                    ctx.fillStyle="#7F2FFF"; ctx.font="bold 16px 'Inter'"; ctx.fillText("VERIFIED MEMBER", 45, 110);
+                    ctx.fillStyle="#0F172A"; ctx.font="800 40px 'Manrope'"; ctx.fillText(finalName, 45, 160);
+                }
+
+                ctx.save(); ctx.beginPath(); ctx.arc(480, 180, 80, 0, Math.PI*2); ctx.clip();
+                if(avatar) ctx.drawImage(avatar, 400, 100, 160, 160);
+                else { ctx.fillStyle="#eee"; ctx.fillRect(400,100,160,160); }
+                ctx.restore();
+                
+                ctx.beginPath(); ctx.arc(480, 180, 80, 0, Math.PI*2); ctx.lineWidth=6; 
+                ctx.strokeStyle= role==='Pilot'?'#FFD700':(role==='Contributor'?'#E02FFF':'#fff'); ctx.stroke();
+
+                ctx.textAlign="left"; 
+                ctx.fillStyle= role==='Member'?"#64748B":"#AAA"; ctx.font="500 18px 'Inter'"; ctx.fillText("@"+handle, 45, 195);
+                ctx.fillStyle = "#10B981"; ctx.fillRect(45, 270, 110, 30);
+                ctx.fillStyle = "#fff"; ctx.font="bold 12px 'Inter'"; ctx.fillText("✓ VERIFIED", 65, 290);
+                const rid = Math.floor(Math.random()*90000+10000);
+                ctx.fillStyle= role==='Member'?"#CBD5E1":"#444"; ctx.font="12px 'JetBrains Mono'"; ctx.fillText(`ID: ${rid} // PI-SQUARED`, 45, 330);
+
+                const iEl = document.getElementById('final-badge');
+                iEl.src = c.toDataURL(); iEl.style.display='block';
+                document.getElementById('badge-empty').style.display='none';
+                const dl = document.getElementById('dl-link');
+                dl.style.display="inline-block"; dl.href=iEl.src; dl.download=`Pi2_${finalName}.png`;
+
+            } catch(e) { console.log(e); }
+            finally { btn.disabled = false; btn.innerText = "Generate Identity"; }
+        }
+
+        init();
+    </script>
+</body>
+</html>
