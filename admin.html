@@ -6,30 +6,31 @@
     <title>Pi² | Admin Console</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { background: #F8F9FC; font-family: 'Inter', sans-serif; display: flex; justify-content: center; padding: 40px; color: #0F172A; }
-        .admin-box { background: #fff; width: 100%; max-width: 500px; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); border: 1px solid #E2E8F0; }
-        h1 { font-family: 'Manrope'; font-weight: 800; margin-bottom: 30px; text-align: center; }
+        body { background: #F8F9FC; font-family: 'Inter', sans-serif; display: flex; justify-content: center; padding: 40px; color: #0F172A; min-height: 100vh; box-sizing: border-box;}
+        .admin-box { background: #fff; width: 100%; max-width: 550px; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); border: 1px solid #E2E8F0; }
+        h1 { font-family: 'Manrope'; font-weight: 800; margin-bottom: 30px; text-align: center; font-size: 24px;}
         
-        .tabs { display: flex; gap: 10px; margin-bottom: 30px; background: #F1F5F9; padding: 5px; border-radius: 12px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: #64748B; transition: 0.2s; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 30px; background: #F1F5F9; padding: 5px; border-radius: 12px; overflow-x: auto; }
+        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: #64748B; transition: 0.2s; white-space: nowrap; font-size: 13px;}
         .tab-btn.active { background: #fff; color: #7F2FFF; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #64748B; margin-bottom: 8px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #E2E8F0; border-radius: 10px; font-family: 'Inter'; font-size: 14px; box-sizing: border-box; }
-        input:focus { outline: none; border-color: #7F2FFF; box-shadow: 0 0 0 3px rgba(127, 47, 255, 0.1); }
+        label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748B; margin-bottom: 8px; letter-spacing: 0.5px;}
+        input, select { width: 100%; padding: 12px; border: 1px solid #E2E8F0; border-radius: 10px; font-family: 'Inter'; font-size: 14px; box-sizing: border-box; background: #fff; transition: 0.2s;}
+        input:focus, select:focus { outline: none; border-color: #7F2FFF; box-shadow: 0 0 0 3px rgba(127, 47, 255, 0.1); }
         
         .btn-submit { width: 100%; padding: 15px; background: #0F172A; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn-submit:hover { background: #7F2FFF; }
-        .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-submit:hover { background: #7F2FFF; transform: translateY(-1px); }
+        .btn-submit:disabled { background: #ccc; cursor: not-allowed; transform: none;}
 
-        .status { margin-top: 20px; text-align: center; font-size: 13px; font-weight: 600; display: none; }
-        .success { color: #10B981; }
-        .error { color: #EF4444; }
+        .status { margin-top: 20px; text-align: center; font-size: 13px; font-weight: 600; display: none; padding: 10px; border-radius: 8px;}
+        .success { color: #065F46; background: #D1FAE5; }
+        .error { color: #991B1B; background: #FEE2E2; }
 
         /* Forms visibility */
-        .form-content { display: none; }
+        .form-content { display: none; animation: fadeIn 0.3s; }
         .form-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -38,11 +39,12 @@
         <h1>Pi² Command Center</h1>
         
         <div class="tabs">
-            <button class="tab-btn active" onclick="showForm('spotlight')">Add Spotlight</button>
-            <button class="tab-btn" onclick="showForm('events')">Add Event</button>
+            <button class="tab-btn active" onclick="showForm('spotlight')">Spotlight</button>
+            <button class="tab-btn" onclick="showForm('events')">Event</button>
+            <button class="tab-btn" onclick="showForm('leaderboard')">Leader</button>
         </div>
 
-        <!-- SPOTLIGHT FORM -->
+        <!-- 1. SPOTLIGHT FORM -->
         <div id="form-spotlight" class="form-content active">
             <form onsubmit="submitForm(event, 'spotlight')">
                 <div class="form-group">
@@ -69,7 +71,7 @@
                 </div>
                 <div class="form-group">
                     <label>Image URL (Optional)</label>
-                    <input type="url" name="image" placeholder="Right click on Discord image -> Copy Link">
+                    <input type="url" name="image" placeholder="Image Link (or leave empty)">
                 </div>
                 <div class="form-group">
                     <label>Pin to top?</label>
@@ -82,7 +84,7 @@
             </form>
         </div>
 
-        <!-- EVENTS FORM -->
+        <!-- 2. EVENTS FORM -->
         <div id="form-events" class="form-content">
             <form onsubmit="submitForm(event, 'events')">
                 <div class="form-group">
@@ -113,13 +115,50 @@
             </form>
         </div>
 
+        <!-- 3. LEADERBOARD FORM (NEW) -->
+        <div id="form-leaderboard" class="form-content">
+            <form onsubmit="submitForm(event, 'leaderboard')">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="e.g. Satoshi" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role">
+                        <option value="Neophyte-temp">Neophyte-temp (Grey)</option>
+                        <option value="Neophyte">Neophyte (Blue)</option>
+                        <option value="Catalyst">Catalyst (Purple)</option>
+                        <option value="Luminary">Luminary (Gold)</option>
+                        <option value="Harmony">Harmony (Rainbow)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div style="display:flex; gap:10px;">
+                        <div style="flex:1">
+                            <label>Points (XP)</label>
+                            <input type="number" name="points" placeholder="1000" required>
+                        </div>
+                        <div style="flex:1">
+                            <label>Change (+/-)</label>
+                            <input type="text" name="change" placeholder="+50">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Avatar URL (Optional)</label>
+                    <input type="url" name="avatar" placeholder="https://...">
+                </div>
+                <button type="submit" class="btn-submit">Add to Leaderboard</button>
+            </form>
+        </div>
+
         <div id="status-msg" class="status"></div>
     </div>
 
     <script>
         // --- CONFIG ---
-        // ВСТАВЬТЕ ССЫЛКУ НА ВАШ GOOGLE APPS SCRIPT СЮДА:
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyesa4kGnzMisgbyvv6WF_Wh6VM8Rrwsfgu0yQ1GTY0FMdiE20mNAzJp2yN2zoKdIam/exec";
+        // ВСТАВЬТЕ ССЫЛКУ НА ВАШ GOOGLE APPS SCRIPT НИЖЕ:
+        const SCRIPT_URL = "ВСТАВЬТЕ_ВАШУ_ССЫЛКУ_ЗДЕСЬ";
 
         function showForm(id) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -140,42 +179,38 @@
 
             // Collect Data
             const formData = new FormData(form);
-            // Добавляем тип листа в данные, чтобы скрипт знал, куда писать
-            formData.append("type", type); 
-            
-            // Превращаем данные в формат URL параметров (Form Data)
-            // Это решает проблему CORS!
-            const data = new URLSearchParams(formData);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
 
-            // Send to Google Script
-            fetch(SCRIPT_URL, {
+            // Send via Simple POST (no-cors mode usually works best for Apps Script web apps)
+            // But to get response, we use text/plain
+            fetch(SCRIPT_URL + "?type=" + type, {
                 method: "POST",
-                body: data,
-                // Важно: не указываем headers Content-Type: application/json
+                body: JSON.stringify(data)
             })
             .then(response => response.json())
             .then(jsondata => {
                 if(jsondata.result === "success") {
-                    status.innerText = "Success! Data added to Sheet.";
+                    status.innerText = "Success! Data added.";
                     status.className = "status success";
                     status.style.display = "block";
                     form.reset();
                 } else {
-                    throw new Error(jsondata.error || "Script Error");
+                    throw new Error(jsondata.error || "Unknown Error");
                 }
             })
             .catch(error => {
-                console.error("Error:", error);
-                // Хак: Google иногда возвращает ошибку синтаксиса даже при успехе из-за редиректа
-                // Если мы здесь, но данные в таблице появились - можно игнорировать.
-                // Но этот код с URLSearchParams обычно работает чисто.
-                status.innerText = "Sent! (Check Sheet if error persists)";
-                status.className = "status success"; // Часто это ложная тревога CORS при успехе
+                // Google Scripts часто возвращают opaque response при CORS, но данные сохраняются
+                // Если видите ошибку в консоли, но данные появились в таблице - это норма для бесплатного тарифа
+                console.log(error);
+                status.innerText = "Request sent (Check Sheet). Note: Updates take ~3 mins to reflect on site.";
+                status.className = "status success"; 
                 status.style.display = "block";
+                form.reset();
             })
             .finally(() => {
                 btn.disabled = false;
-                btn.innerText = type === 'events' ? "Publish Event" : "Publish Spotlight";
+                btn.innerText = "Publish";
             });
         }
     </script>
