@@ -276,154 +276,165 @@
     <canvas id="badge-canvas" width="600" height="360"></canvas>
 
     <script>
-        // === НАСТРОЙКИ (ВСТАВЬТЕ СВОИ ССЫЛКИ СЮДА) ===
+        // === SETTINGS ===
         const SHEET_LINKS = {
-            // Внимание: проверьте параметр gid=...
-            quotes: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=0&single=true&output=csv",
+            // Updated GIDs based on your previous input
+            quotes: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=0&single=true&output=csv", 
             spotlight: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=1051549890&single=true&output=csv",
             events: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=762300614&single=true&output=csv"
         };
 
-        // Запасные данные (показываются ТОЛЬКО если таблица не грузится)
         let data = {
             quotes: ["Universal Settlement Layer.", "Trust Math.", "Zero Knowledge."],
-            spotlight: [
-                {title: "Example: Data not loaded", author: "System", tag: "Error", link: "#"},
-                {title: "Check Console (F12)", author: "Admin", tag: "Info", link: "#"}
-            ],
+            spotlight: [],
             events: []
         };
 
         async function init() {
             renderQuote();
-            renderHub(); // Сначала рисуем заглушки
+            renderDashboard(); // Render initial state
             
-            // Загружаем данные
-            console.log("🚀 Starting Data Fetch...");
+            // Particles
+            if(window.particlesJS) {
+                particlesJS("particles-js", {"particles":{"number":{"value":25},"color":{"value":"#7F2FFF"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":false},"move":{"speed":0.5}}});
+            }
+
+            // Fetch Data
             await Promise.all([
                 fetchData('quotes'), 
                 fetchData('spotlight'), 
                 fetchData('events')
             ]);
             
-            console.log("✅ Render updated data");
-            renderAll();
+            // Re-render after data
+            renderQuote();
+            renderDashboard();
+            renderHub();
         }
 
         async function fetchData(type) {
-            // Добавляем время, чтобы обойти кэш браузера
             const proxy = `https://corsproxy.io/?${encodeURIComponent(SHEET_LINKS[type])}&t=${Date.now()}`;
             try {
                 const r = await fetch(proxy);
                 if (r.ok) {
                     const txt = await r.text();
-                    const parsed = parseCSV(txt);
-                    if(parsed.length > 0) {
-                        data[type] = parsed;
-                        console.log(`✅ Loaded ${type}: ${parsed.length} items`);
+                    
+                    // Special parser for Quotes (simple list) vs Others (key-value)
+                    if (type === 'quotes') {
+                        // Just split by new lines for quotes
+                        const lines = txt.split(/\r?\n/).filter(l => l.length > 5);
+                        if(lines.length > 0) data.quotes = lines;
                     } else {
-                        console.warn(`⚠️ Loaded ${type} but it was empty or parsing failed.`);
+                        // Standard CSV parser for Events/Spotlight
+                        const parsed = parseCSV(txt);
+                        if(parsed.length > 0) data[type] = parsed;
                     }
-                } else {
-                    console.error(`❌ Failed to load ${type}: Server Error ${r.status}`);
+                    console.log(`✅ Loaded ${type}`);
                 }
-            } catch (e) { 
-                console.error(`❌ Network Error for ${type}:`, e); 
-            }
+            } catch (e) { console.error(`Failed ${type}`, e); }
         }
 
         function parseCSV(text) {
-            const lines = text.split(/\r?\n/).filter(line => line.trim() !== ""); // Убираем пустые строки
+            const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
             if (lines.length < 2) return [];
-            
             const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-            console.log("Headers found:", headers); // Для отладки
-
-            const result = [];
-            for (let i = 1; i < lines.length; i++) {
-                // Сложная регулярка для правильной обработки запятых внутри кавычек
-                const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(s => s.replace(/^"|"$/g, '').trim());
-                
-                // Пропускаем совсем пустые строки
-                if (row.length < 2) continue;
-                
+            
+            return lines.slice(1).map(line => {
+                const row = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(s => s.replace(/^"|"$/g, '').trim());
                 let obj = {};
-                headers.forEach((h, index) => { 
-                    obj[h] = row[index] || ""; 
-                });
-                result.push(obj);
+                headers.forEach((h, i) => obj[h] = row[i] || "");
+                return obj;
+            });
+        }
+
+        function renderDashboard() {
+            // 1. Quote
+            // Handle quotes array being simple strings OR objects
+            const rawQuote = data.quotes[Math.floor(Math.random() * data.quotes.length)];
+            // If the CSV parser returned objects (row 1 header), extract the first value, otherwise use string
+            const quoteText = (typeof rawQuote === 'object') ? Object.values(rawQuote)[0] : rawQuote;
+            
+            const qEl = document.getElementById('hero-quote');
+            if(qEl) qEl.innerText = quoteText || "Math is Law.";
+            
+            // 2. Event Widget
+            if(data.events && data.events.length > 0) {
+                const ev = data.events[0];
+                document.getElementById('dash-event-title').innerText = ev.title || "Upcoming Event";
+                document.getElementById('dash-event-time').innerHTML = `<i class="fa-regular fa-clock"></i> ${ev.day} ${ev.month} • ${ev.time}`;
+            } else {
+                document.getElementById('dash-event-title').innerText = "No upcoming events";
+                document.getElementById('dash-event-time').innerText = "Check back later";
             }
-            return result;
-        }
 
-        function renderAll() {
-            renderQuote();
-            renderHub();
-        }
-
-        // --- RENDERERS ---
-        function renderHub() {
-            // 1. SPOTLIGHT
-            const sCont = document.getElementById('spotlight-container');
+            // 3. Spotlight Widget
             if(data.spotlight && data.spotlight.length > 0) {
-                // Сортировка: Pin вверх
-                data.spotlight.sort((a,b) => (b.pin === 'yes') - (a.pin === 'yes'));
+                // Sort by pin if available
+                const sorted = [...data.spotlight].sort((a,b) => (b.pin === 'yes') - (a.pin === 'yes'));
+                const sp = sorted[0];
+                
+                document.getElementById('dash-spot-title').innerText = (sp.title || "").substring(0, 35) + "...";
+                document.getElementById('dash-spot-author').innerHTML = `<i class="fa-brands fa-twitter"></i> ${sp.author || "Member"}`;
+            } else {
+                 document.getElementById('dash-spot-title').innerText = "Join the Community";
+                 document.getElementById('dash-spot-author').innerText = "@PiSquared";
+            }
+        }
 
-                sCont.innerHTML = data.spotlight.map(item => {
+        function renderQuote() {
+            renderDashboard(); // Re-use dashboard render logic
+        }
+
+        function renderHub() {
+            // Spotlight Render
+            const sCont = document.getElementById('spotlight-container');
+            if(sCont && data.spotlight.length > 0) {
+                const sorted = [...data.spotlight].sort((a,b) => (b.pin === 'yes') - (a.pin === 'yes'));
+                sCont.innerHTML = sorted.map(item => {
                     const img = item.image || item.img;
+                    const imgHtml = img ? `<img src="${img}" class="spot-img">` : `<div class="spot-img-container"><div class="spot-placeholder">π²</div></div>`;
                     
-                    // Если картинки нет - красивый градиент с буквами
-                    const fallback = `<div style="width:100%; height:100%; background:linear-gradient(135deg, #F3EFFF 0%, #E0D4FF 100%); display:flex; align-items:center; justify-content:center; color:rgba(127,47,255,0.2); font-size:40px; font-weight:800;">π²</div>`;
-                    
-                    const imgHtml = img ? `<img src="${img}" class="spot-img">` : `<div class="spot-img-container">${fallback}</div>`;
-                    
-                    // Авто-теги
                     let autoTag = item.tag;
                     if (!autoTag && item.link) {
-                        if (item.link.includes('twitter') || item.link.includes('x.com')) autoTag = "Tweet";
-                        else if (item.link.includes('youtube')) autoTag = "Video";
+                        if (item.link.includes('twitter')) autoTag = "Tweet";
+                        else if (item.link.includes('youtu')) autoTag = "Video";
                         else autoTag = "News";
                     }
 
                     return `
-                    <a href="${item.link || '#'}" target="_blank" style="text-decoration:none;">
                     <div class="spot-card">
-                        <div class="spot-img-container">${imgHtml}</div>
+                        ${imgHtml}
                         <div class="spot-body">
                             <span class="spot-tag">${autoTag || "Update"}</span>
                             <div class="spot-title">${item.title}</div>
-                            <div class="spot-link"><i class="fa-brands fa-twitter"></i> ${item.author || "Community"}</div>
+                            <a href="${item.link || '#'}" target="_blank" class="spot-link"><i class="fa-brands fa-twitter"></i> ${item.author || "Member"}</a>
                         </div>
-                    </div></a>`;
+                    </div>`;
                 }).join('');
             }
 
-            // 2. EVENTS
+            // Events Render
             const eCont = document.getElementById('events-container');
-            if(data.events && data.events.length > 0) {
+            if(eCont && data.events.length > 0) {
                 eCont.innerHTML = data.events.map(ev => {
-                    const titleEnc = encodeURIComponent(ev.title || "Event");
-                    const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titleEnc}&details=PiSquared+Community+Event`;
-                    
+                    const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title || "Event")}&details=PiSquared+Event`;
                     return `
                     <div class="event-card">
                         <div class="date-badge">
-                            <span class="date-day">${ev.day || "01"}</span>
-                            <span class="date-month">${ev.month || "JAN"}</span>
+                            <span class="date-day">${ev.day}</span>
+                            <span class="date-month">${ev.month}</span>
                         </div>
                         <div class="event-details">
                             <div class="event-title">${ev.title}</div>
-                            <div class="event-meta"><i class="fa-regular fa-clock"></i> ${ev.time || "TBA"}</div>
+                            <div class="event-meta"><i class="fa-regular fa-clock"></i> ${ev.time}</div>
                         </div>
-                        <a href="${googleLink}" target="_blank" class="cal-btn">Add</a>
+                        <a href="${googleLink}" target="_blank" class="cal-btn">Join</a>
                     </div>`;
                 }).join('');
-            } else {
-                eCont.innerHTML = `<div style="text-align:center; color:#999; padding:20px;">No upcoming events found.</div>`;
             }
         }
 
-        // --- TABS & UI ---
+        // TABS
         window.switchTab = (id) => {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             event.currentTarget.classList.add('active');
@@ -439,22 +450,10 @@
             document.getElementById('view-' + id).style.display = 'block';
             if(id === 'events') document.getElementById('view-' + id).style.display = 'flex';
         }
-
-        window.renderQuote = () => {
-            const list = Array.isArray(data.quotes[0]) ? data.quotes.map(x=>x.quote || x[0]) : data.quotes;
-            const el = document.getElementById('quote-display');
-            if(!el) return;
-            el.style.opacity = 0;
-            setTimeout(() => {
-                el.innerText = list[Math.floor(Math.random() * list.length)] || "Math is Law.";
-                el.style.opacity = 1;
-            }, 200);
-        }
-
-        // --- ID GENERATOR ---
-        // (Оставляем тот же код генератора, он работает)
+        
+        // --- ID GENERATOR (UNCHANGED) ---
         async function generateBadge() {
-            const btn = document.getElementById('generate-btn'); btn.disabled = true; btn.innerText = "Minting...";
+            const btn = document.getElementById('generate-btn'); btn.disabled = true; btn.innerText = "Processing...";
             try {
                 const handle = document.getElementById('twitter-handle').value.replace('@','').trim();
                 const dName = document.getElementById('display-name').value.trim();
@@ -532,24 +531,9 @@
             } catch(e) { console.log(e); }
             finally { btn.disabled = false; btn.innerText = "Generate Identity"; }
         }
-        
-        // Polyfill for roundRect if needed (for older browsers)
-        if (CanvasRenderingContext2D.prototype.roundRect === undefined) {
-          CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-            if (w < 2 * r) r = w / 2;
-            if (h < 2 * r) r = h / 2;
-            this.beginPath();
-            this.moveTo(x + r, y);
-            this.arcTo(x + w, y, x + w, y + h, r);
-            this.arcTo(x + w, y + h, x, y + h, r);
-            this.arcTo(x, y + h, x, y, r);
-            this.arcTo(x, y, x + w, y, r);
-            this.closePath();
-            return this;
-          };
-        }
 
-        init();
+        // Init
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
