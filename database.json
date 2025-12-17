@@ -1,0 +1,34 @@
+{
+  "quotes": [
+    "Math is Law.",
+    "Universal Settlement Layer.",
+    "Zero Knowledge is the Future."
+  ],
+  "spotlight": [
+    {
+      "title": "Pi Squared Whitepaper",
+      "author": "@PiSquared",
+      "tag": "Official",
+      "img": "https://pbs.twimg.com/profile_banners/1587392666016628736/1696956667/1500x500",
+      "link": "https://pi2.network/papers",
+      "pin": "yes"
+    },
+    {
+      "title": "Community Art Showcase",
+      "author": "@Community",
+      "tag": "Art",
+      "img": "",
+      "link": "#",
+      "pin": "no"
+    }
+  ],
+  "events": [
+    {
+      "day": "15",
+      "month": "OCT",
+      "title": "Community Call",
+      "time": "16:00 UTC",
+      "link": "https://discord.gg/pisquared"
+    }
+  ]
+}
