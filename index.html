@@ -66,24 +66,18 @@
         .screen { flex: 1; position: relative; overflow: hidden; }
         .tab-content { display: none; width: 100%; height: 100%; padding: 30px; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease; }
         .tab-content.active { display: flex; flex-direction: column; opacity: 1; }
-        #tab-dashboard.active { display: block; padding: 0; } /* Dashboard uses internal grid */
+        #tab-dashboard.active { display: block; padding: 0; } 
 
-        /* --- DASHBOARD (NEW LAYOUT) --- */
+        /* --- DASHBOARD --- */
         .dash-container {
             display: grid; 
-            grid-template-columns: 1.2fr 0.8fr; /* Left: Resources/Widgets, Right: Twitter */
+            grid-template-columns: 1.2fr 0.8fr; 
             height: 100%; width: 100%;
         }
+        .dash-left { padding: 30px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+        .dash-right { background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden; }
 
-        .dash-left {
-            padding: 30px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto;
-        }
-
-        .dash-right {
-            background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden;
-        }
-
-        /* Resource Links (Compact) */
+        /* Resource Links */
         .res-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px; }
         .res-card {
             display: flex; align-items: center; gap: 16px; padding: 16px; 
@@ -93,30 +87,25 @@
         .res-card:hover { border-color: var(--brand); transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .res-icon { width: 36px; height: 36px; background: #F5F0FF; color: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
 
-        /* Widgets Area */
-        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 200px; }
+        /* Widgets */
+        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 180px; }
         .dash-widget {
             background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 24px;
             display: flex; flex-direction: column; justify-content: space-between;
             transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
         }
         .dash-widget:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
-        
         .widget-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; justify-content: space-between; }
         
-        /* Leader Widget Specifics */
-        .top-leader-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #FFD700; margin-bottom: 10px; }
+        .top-leader-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #FFD700; margin-bottom: 10px; }
         .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 18px; }
-        .top-leader-role { font-size: 11px; font-weight: 700; color: #FFD700; background: #000; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-top: 5px; }
-
-        /* Event Widget Specifics */
         .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 18px; line-height: 1.3; }
         .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 5px; display: flex; align-items: center; gap: 6px; }
 
-        /* Twitter Embed */
+        /* Twitter */
         .twitter-embed { width: 100%; height: 100%; border: none; }
 
-        /* --- LEADERBOARD (HYBRID) --- */
+        /* --- LEADERBOARD --- */
         .lb-container { width: 100%; max-width: 800px; margin: 0 auto; }
         .sub-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-shrink: 0; flex-wrap: wrap;}
         .sub-btn { padding: 6px 16px; font-size: 12px; font-family: 'JetBrains Mono'; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; color: var(--text-sub); transition: 0.2s; }
@@ -151,7 +140,7 @@
         .row-change { font-size: 11px; font-weight: 600; }
         .pos { color: #10B981; } .neg { color: #EF4444; } .neu { color: #CBD5E1; }
 
-        /* SPOTLIGHT (Hall of Fame) */
+        /* SPOTLIGHT */
         .spotlight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; width: 100%; }
         .spot-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column; }
         .spot-card:hover { transform: translateY(-5px); border-color: var(--brand); box-shadow: 0 10px 20px rgba(127,47,255,0.08); }
@@ -176,7 +165,7 @@
 
         @media (max-width: 900px) {
             .dash-container { grid-template-columns: 1fr; }
-            .dash-right { display: none; } /* Hide twitter on mobile */
+            .dash-right { display: none; }
             .widgets-row { grid-template-columns: 1fr; }
             .interface { height: auto; min-height: 100vh; border-radius: 0; width: 100%; margin: 0; }
         }
@@ -245,7 +234,7 @@
 
                     <!-- Right: Twitter -->
                     <div class="dash-right">
-                        <a class="twitter-timeline" data-theme="light" data-chrome="noheader nofooter transparent" href="https://twitter.com/PiSquared?ref_src=twsrc%5Etfw">Loading Tweets...</a> 
+                        <a class="twitter-timeline" data-height="600" data-theme="light" data-chrome="noheader nofooter transparent" href="https://twitter.com/PiSquared?ref_src=twsrc%5Etfw">Loading Tweets...</a> 
                         <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                     </div>
                 </div>
@@ -275,7 +264,6 @@
                         <button class="sub-btn" onclick="filterLeaderboard('Catalyst', this)">Catalyst</button>
                         <button class="sub-btn" onclick="filterLeaderboard('Neophyte', this)">Neophyte</button>
                     </div>
-                    
                     <div id="lb-podium" class="lb-podium"></div>
                     <div id="lb-list" class="lb-list"></div>
                 </div>
@@ -285,11 +273,11 @@
     </div>
 
     <script>
-        // CONFIG - Вставьте ваши ссылки
+        // --- CONFIGURATION ---
         const SHEET_LINKS = {
-            spotlight: https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=1051549890&single=true&output=csv",
+            spotlight: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=1051549890&single=true&output=csv",
             events: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=762300614&single=true&output=csv",
-            https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=51300448&single=true&output=csv"
+            leaderboard: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=51300448&single=true&output=csv"
         };
 
         const ROLES = {
