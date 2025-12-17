@@ -71,7 +71,12 @@
             height: 100%; width: 100%;
         }
         .dash-left { padding: 30px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
-        .dash-right { background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden; position: relative;}
+        
+        /* Twitter Column Fixed */
+        .dash-right { 
+            background: #fff; border-left: 1px solid var(--border); 
+            padding: 0; overflow-y: auto; position: relative;
+        }
 
         /* Resource Links */
         .res-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px; }
@@ -93,36 +98,41 @@
         .dash-widget:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
         .widget-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; justify-content: space-between; z-index: 2; position: relative; }
         
-        /* NEW: Leader Widget Styling */
+        /* UPDATED: Leader Widget Premium Styling */
         .leader-widget-content {
             display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;
-            position: relative;
+            position: relative; z-index: 2;
+        }
+        .leader-bg-anim {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0) 40%, rgba(127,47,255,0.05) 100%);
+            z-index: 0;
         }
         .leader-banner {
-            position: absolute; top: 0; left: 0; width: 100%; height: 80px;
-            background: var(--border); opacity: 0.2; z-index: 0;
+            position: absolute; top: 0; left: 0; width: 100%; height: 90px;
+            background: var(--brand-light); opacity: 0.6; z-index: 1;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-        .leader-avatar-wrapper { position: relative; z-index: 1; margin-top: 20px; margin-bottom: 10px; }
+        .leader-avatar-wrapper { position: relative; z-index: 2; margin-top: 15px; margin-bottom: 12px; }
         .top-leader-avatar { 
-            width: 70px; height: 70px; border-radius: 50%; object-fit: cover; 
-            border: 3px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+            width: 80px; height: 80px; border-radius: 50%; object-fit: cover; 
+            border: 4px solid #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
+            background: #fff;
         }
         .leader-crown {
-            position: absolute; top: -15px; right: -5px; font-size: 20px; color: #FFD700;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); animation: float 2s infinite ease-in-out;
+            position: absolute; top: -20px; right: -5px; font-size: 24px; color: #FFD700;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); animation: float 3s infinite ease-in-out;
         }
-        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 18px; margin-bottom: 5px; }
-        .top-leader-role { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: #fff; background: #000; }
+        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 20px; margin-bottom: 6px; color: var(--text-main); }
+        .top-leader-role { 
+            font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 100px; 
+            color: #fff; background: var(--text-main); letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
         
         /* Event Widget */
-        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 20px; line-height: 1.3; }
-        .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 10px; display: flex; align-items: center; gap: 8px; background: #F8FAFC; padding: 8px 12px; border-radius: 8px; width: fit-content; }
-
-        /* Twitter */
-        .twitter-embed { width: 100%; height: 100%; border: none; overflow-y: scroll; padding-right: 5px; }
-        /* Custom scrollbar for twitter area */
-        .dash-right::-webkit-scrollbar { width: 4px; }
-        .dash-right::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 22px; line-height: 1.3; }
+        .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 15px; display: flex; align-items: center; gap: 8px; background: #F8FAFC; padding: 8px 12px; border-radius: 8px; width: fit-content; border: 1px solid var(--border); }
 
         /* LEADERBOARD */
         .lb-container { width: 100%; max-width: 800px; margin: 0 auto; }
@@ -176,13 +186,14 @@
         .event-card { display: flex; align-items: center; gap: 20px; padding: 20px; background: #fff; border: 1px solid var(--border); border-radius: 16px; transition: 0.2s; }
         .event-card:hover { border-color: var(--brand); box-shadow: var(--shadow); }
         .date-badge { width: 60px; height: 60px; background: #F8FAFC; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .d-num { font-weight: 800; font-size: 18px; font-family: 'Manrope'; } .d-mon { font-size: 10px; font-weight: 700; color: var(--brand); margin-top: 2px; }
+        .date-day { font-family: 'Manrope'; font-weight: 800; font-size: 18px; line-height: 1; color: var(--text-main); }
+        .date-month { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--brand); margin-top: 2px; }
         .event-details { flex: 1; }
         .event-title { font-family: 'Manrope'; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
         .event-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; }
         .cal-btn { background: #0F172A; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; }
 
-        @keyframes float { 0% {transform: translateY(0px);} 50% {transform: translateY(-5px);} 100% {transform: translateY(0px);} }
+        @keyframes float { 0% {transform: translateY(0px);} 50% {transform: translateY(-8px);} 100% {transform: translateY(0px);} }
 
         @media (max-width: 900px) {
             .dash-container { grid-template-columns: 1fr; }
@@ -194,6 +205,7 @@
 </head>
 <body>
 
+    <div id="math-layer"></div>
     <div id="particles-js"></div>
 
     <div class="interface">
@@ -240,27 +252,31 @@
                             
                             <!-- Widget: Top Leader (UPGRADED) -->
                             <div class="dash-widget" onclick="switchTab('leaderboard')">
-                                <!-- Background banner dynamically set by JS -->
-                                <div id="leader-banner" class="leader-banner"></div> 
+                                <div class="leader-bg-anim"></div>
+                                <div id="leader-banner" class="leader-banner"></div>
+                                <div class="widget-label"><span>Top Contributor</span> <i class="fa-solid fa-trophy" style="color:#FFD700; z-index:2"></i></div>
                                 <div class="leader-widget-content">
                                     <div class="leader-avatar-wrapper">
                                         <i class="fa-solid fa-crown leader-crown"></i>
                                         <div id="dash-top-avatar" class="top-leader-avatar" style="background:#ddd;"></div>
                                     </div>
                                     <div id="dash-top-user" class="top-leader-name">Loading...</div>
-                                    <div id="dash-top-role" class="top-leader-role">TOP CONTRIBUTOR</div>
+                                    <div id="dash-top-role" class="top-leader-role">RANK #1</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right: Twitter -->
+                    <!-- Right: Twitter (FIXED HEIGHT) -->
                     <div class="dash-right">
-                        <a class="twitter-timeline" data-height="100%" data-theme="light" data-chrome="noheader nofooter transparent" href="https://twitter.com/PiSquared?ref_src=twsrc%5Etfw">
-                            <div style="padding:20px; text-align:center; color:#999; display:flex; flex-direction:column; gap:10px; align-items:center; justify-content:center; height:100%;">
-                                <i class="fa-brands fa-x-twitter" style="font-size:30px;"></i>
-                                <span>Loading feed...<br><span style="font-size:12px">(Disable AdBlock if not loading)</span></span>
-                                <a href="https://twitter.com/PiSquared" target="_blank" class="cal-btn">Open on X</a>
+                        <a class="twitter-timeline" 
+                           data-height="700" 
+                           data-theme="light" 
+                           data-chrome="noheader nofooter transparent" 
+                           href="https://twitter.com/PiSquared?ref_src=twsrc%5Etfw">
+                            <div style="padding:40px; text-align:center; color:#aaa;">
+                                <i class="fa-brands fa-twitter" style="font-size:30px; margin-bottom:10px;"></i><br>
+                                Loading Tweets...
                             </div>
                         </a> 
                         <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -304,17 +320,17 @@
     <script>
         // CONFIG
         const SHEET_LINKS = {
-            spotlight: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=1051549890&single=true&output=csv",
-            events: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=762300614&single=true&output=csv",
-            leaderboard: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=51300448&single=true&output=csv"
+            spotlight: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=1051549890&output=csv",
+            events: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=762300614&output=csv",
+            leaderboard: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSQKI-9DTMPEMw9nFMb8b64ULgzmt2Va5M5aR3bsvZ2vpaTnmJT0JIIWN1dqXMO37fEMA5Zjod1nWW/pub?gid=1384013401&output=csv"
         };
 
         const ROLES = {
-            "Harmony": { color: "var(--role-harmony)", label: "Harmony" },
-            "Luminary": { color: "var(--role-luminary)", label: "Luminary" },
-            "Catalyst": { color: "var(--role-catalyst)", label: "Catalyst" },
-            "Neophyte": { color: "var(--role-neophyte)", label: "Neophyte" },
-            "Neophyte-temp": { color: "var(--role-temp)", label: "Neophyte-temp" }
+            "Harmony": { color: "#7928CA", label: "Harmony" },
+            "Luminary": { color: "#F59E0B", label: "Luminary" },
+            "Catalyst": { color: "#7F2FFF", label: "Catalyst" },
+            "Neophyte": { color: "#3B82F6", label: "Neophyte" },
+            "Neophyte-temp": { color: "#94A3B8", label: "Neophyte-temp" }
         };
 
         let data = { spotlight: [], events: [], leaderboard: [] };
@@ -327,6 +343,17 @@
                 if(window.particlesJS) {
                     particlesJS("particles-js", {"particles":{"number":{"value":25},"color":{"value":"#7F2FFF"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":false},"move":{"speed":0.5}}});
                 }
+                const bg = document.getElementById('math-layer');
+                const symbols = ['π', '∑', '∫', '√', '≈', '∅'];
+                for(let i=0; i<15; i++) {
+                    const el = document.createElement('div');
+                    el.classList.add('math-symbol');
+                    el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                    el.style.left = Math.random() * 100 + '%';
+                    el.style.top = Math.random() * 100 + '%';
+                    el.style.fontSize = (Math.random() * 30 + 10) + 'px';
+                    bg.appendChild(el);
+                }
             } catch(e) {}
 
             renderDashboard();
@@ -335,7 +362,7 @@
             
             await Promise.all([fetchData('spotlight'), fetchData('events'), fetchData('leaderboard')]);
             
-            // Mock Data
+            // Mock Data if fetch fails or empty (for demo)
             if(data.leaderboard.length === 0) {
                  data.leaderboard = [
                     {username: "Maffoos", role: "Luminary", points: "5000", avatar: "", change: "+100"},
@@ -396,17 +423,15 @@
                 document.getElementById('dash-top-user').innerText = top.username;
                 const roleInfo = ROLES[top.role] || ROLES["Neophyte"];
                 
-                // Set banner color
+                // Set dynamic colors
                 document.getElementById('leader-banner').style.background = roleInfo.color;
-                
                 document.getElementById('dash-top-role').innerText = "● " + top.role;
-                document.getElementById('dash-top-role').style.background = "#fff";
-                document.getElementById('dash-top-role').style.color = "#000";
-                document.getElementById('dash-top-role').style.border = "1px solid #eee";
+                document.getElementById('dash-top-role').style.background = roleInfo.color;
+                document.getElementById('dash-top-role').style.color = "#fff";
                 
                 const avHtml = top.avatar ? `<img src="${top.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : `<div style="width:100%;height:100%;border-radius:50%;background:${roleInfo.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:24px;">${top.username[0]}</div>`;
                 document.getElementById('dash-top-avatar').innerHTML = avHtml;
-                document.getElementById('dash-top-avatar').style.borderColor = "#fff"; // Clean border
+                document.getElementById('dash-top-avatar').style.borderColor = roleInfo.color; 
             } else {
                 document.getElementById('dash-top-user').innerText = "Loading...";
             }
@@ -414,7 +439,6 @@
 
         // --- HUB ---
         function renderHub() {
-            // Spotlight
             const sCont = document.getElementById('spotlight-container');
             if(data.spotlight.length > 0) {
                 sCont.innerHTML = data.spotlight.map(item => {
@@ -424,11 +448,11 @@
                 }).join('');
             }
 
-            // Events
             const eCont = document.getElementById('events-container');
             if(data.events.length > 0) {
                 eCont.innerHTML = data.events.map(ev => {
-                    return `<div class="event-card"><div class="date-badge"><span class="d-num">${ev.day}</span><span class="d-mon">${ev.month}</span></div><div class="event-details"><div class="event-title">${ev.title}</div><div class="event-meta"><i class="fa-regular fa-clock"></i> ${ev.time}</div></div><a href="${ev.link}" target="_blank" class="cal-btn">Join</a></div>`;
+                    const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title || "Event")}&details=PiSquared+Community+Event`;
+                    return `<div class="event-card"><div class="date-badge"><span class="d-num">${ev.day}</span><span class="d-mon">${ev.month}</span></div><div class="event-details"><div class="event-title">${ev.title}</div><div class="event-meta"><i class="fa-regular fa-clock"></i> ${ev.time}</div></div><a href="${googleLink}" target="_blank" class="cal-btn">Add</a></div>`;
                 }).join('');
             }
         }
