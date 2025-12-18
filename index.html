@@ -16,7 +16,7 @@
             --text-main: #0F172A; --text-sub: #64748B;
             --brand: #7F2FFF; --brand-light: #F6F0FF;
             --border: #E2E8F0; --radius: 24px;
-            --shadow: 0 10px 40px -10px rgba(127, 47, 255, 0.08);
+            --shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.08);
             
             --role-harmony: linear-gradient(135deg, #FF0080, #7928CA);
             --role-luminary: linear-gradient(135deg, #F59E0B, #D97706);
@@ -32,164 +32,101 @@
             background-size: 30px 30px;
             color: var(--text-main); font-family: 'Inter', sans-serif;
             
-            /* ЦЕНТРОВКА САМОГО ОКНА */
-            min-height: 100vh;
-            display: grid;
-            place-items: center;
-            overflow: hidden;
-            padding: 20px;
+            /* ЖЕЛЕЗОБЕТОННАЯ ЦЕНТРОВКА */
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2vh 2vw; /* Гибкие отступы от краев экрана */
+            overflow: hidden; /* Скролл будет только внутри приложения */
         }
 
-        /* --- ГЛАВНЫЙ КОНТЕЙНЕР --- */
         .interface {
             position: relative; z-index: 10;
-            /* Фиксируем размеры, чтобы не прыгало */
-            width: 100%; max-width: 1400px;
-            height: 90vh; min-height: 700px;
+            width: 100%;
+            max-width: 1320px;
+            /* Высота подстраивается, но не превышает видимую область */
+            height: 100%; 
+            max-height: 900px; 
             
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px);
-            border: 1px solid #fff; border-radius: var(--radius);
-            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.15);
-            display: flex; flex-direction: column; overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            
+            display: flex;
+            flex-direction: column;
         }
 
-        /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); background: #fff; flex-shrink: 0; }
+        /* HEADER & NAVIGATION (Static) */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2.5rem; border-bottom: 1px solid var(--border); background: #fff; flex-shrink: 0; }
         .logo-group { display: flex; align-items: center; gap: 12px; }
-        .custom-logo { height: 36px; width: auto; object-fit: contain; }
-        .badge { background: var(--brand-light); color: var(--brand); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(127,47,255,0.1); }
+        .custom-logo { height: 32px; width: auto; object-fit: contain; }
+        .logo-text { font-family: 'Manrope'; font-weight: 800; font-size: 20px; color: #000; }
+        .badge { background: var(--brand-light); color: var(--brand); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 6px; }
         .dot { width: 6px; height: 6px; background: #10B981; border-radius: 50%; }
 
-        /* NAV */
-        nav { display: flex; justify-content: center; gap: 8px; padding: 16px 40px; border-bottom: 1px solid var(--border); background: #F8FAFC; flex-shrink: 0; overflow-x: auto; }
+        nav { display: flex; justify-content: center; gap: 8px; padding: 12px; border-bottom: 1px solid var(--border); background: #F8FAFC; flex-shrink: 0; }
         .nav-btn {
-            padding: 8px 24px; border: 1px solid transparent; background: transparent;
+            padding: 8px 20px; border: 1px solid transparent; background: transparent;
             font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--text-sub);
-            border-radius: 8px; cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+            border-radius: 8px; cursor: pointer; transition: 0.2s ease;
         }
-        .nav-btn:hover { background: #fff; color: #000; transform: translateY(-1px); }
-        .nav-btn.active { background: #0F172A; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .nav-btn:hover { background: #fff; color: #000; }
+        .nav-btn.active { background: #0F172A; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
-        /* SCREEN */
-        .screen { flex: 1; position: relative; overflow: hidden; }
-        .tab-content { display: none; width: 100%; height: 100%; padding: 0; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease; }
-        .tab-content.active { display: flex; flex-direction: column; opacity: 1; }
-        #tab-dashboard.active { display: block; } 
+        /* SCREEN (The only scrolling part) */
+        .screen { 
+            flex: 1; 
+            overflow-y: auto; /* Позволяет скроллить контент, если он не влезает */
+            position: relative; 
+            background: #FAFBFF;
+        }
+        
+        .tab-content { display: none; width: 100%; padding: 2rem; opacity: 0; transition: opacity 0.3s ease; }
+        .tab-content.active { display: block; opacity: 1; }
 
-        /* --- DASHBOARD LAYOUT (FIXED) --- */
+        /* DASHBOARD GRID */
         .dash-container { 
             display: grid; 
-            /* Левая часть (1fr) + Правая часть (360px) */
-            grid-template-columns: 1fr 360px; 
-            height: 100%; width: 100%; 
+            grid-template-columns: 1fr 340px; 
+            gap: 0;
+            min-height: 100%;
         }
         
-        /* ЛЕВАЯ ПАНЕЛЬ - ТЕПЕРЬ НА ВСЮ ШИРИНУ */
-        .dash-left { 
-            padding: 40px; 
-            overflow-y: auto; 
-            display: flex; flex-direction: column; 
-            /* УБРАЛИ align-items: center, чтобы контент растягивался */
-        }
+        .dash-left { padding: 2rem; border-right: 1px solid var(--border); }
+        .dash-right { background: #fff; padding: 0; }
 
-        .dash-wrapper {
-            /* УБРАЛИ max-width: 1000px, теперь контент занимает все место */
-            width: 100%; 
-            display: flex; flex-direction: column; gap: 30px;
-        }
-
-        .dash-right { background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden; position: relative;}
-
-        /* QUICK ACCESS (GRID) */
-        .res-grid { 
-            display: grid; 
-            /* Адаптивная сетка: минимум 240px на карточку, иначе перенос */
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
-            gap: 20px; 
-        }
+        /* QUICK ACCESS (Grid 3 columns) */
+        .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
         .res-card { 
-            display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
-            gap: 12px; padding: 24px; background: #fff; border: 1px solid var(--border); 
-            border-radius: 20px; text-decoration: none; color: var(--text-main); transition: 0.2s; height: 100%;
+            display: flex; flex-direction: column; gap: 10px; padding: 1.25rem; 
+            background: #fff; border: 1px solid var(--border); border-radius: 16px; 
+            text-decoration: none; color: var(--text-main); transition: 0.2s;
         }
-        .res-card:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
-        .res-icon { width: 44px; height: 44px; background: #F5F0FF; color: var(--brand); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        
-        /* LIVE STATUS (GRID) */
-        .widgets-row { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; /* Две колонки всегда */
-            gap: 20px; 
-            min-height: 300px; 
-        }
-        
+        .res-card:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: 0 10px 20px -10px rgba(0,0,0,0.1); }
+        .res-icon { width: 36px; height: 36px; background: #F5F0FF; color: var(--brand); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+        /* LIVE STATUS (Grid 2 columns) */
+        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .dash-widget {
-            background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 28px;
+            background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 1.5rem;
             display: flex; flex-direction: column; justify-content: space-between;
-            transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
+            transition: 0.3s; cursor: pointer; min-height: 220px;
         }
-        .dash-widget:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
-        
-        .section-title { font-family: 'Manrope'; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; padding-left: 4px;}
-        .widget-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; display: flex; justify-content: space-between; z-index: 2; position: relative; letter-spacing: 0.5px;}
+        .dash-widget:hover { border-color: var(--brand); box-shadow: var(--shadow); }
+        .section-title { font-family: 'Manrope'; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
 
-        /* WIDGET CONTENT */
-        .leader-widget-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; position: relative; z-index: 2; margin-top: 10px; }
-        .leader-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100px; background: var(--brand-light); opacity: 0.6; z-index: 1; }
-        .top-leader-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background: #fff; margin-bottom: 12px; margin-top: 25px; position: relative; z-index: 2;}
-        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 20px; margin-bottom: 4px; }
-        .top-leader-role { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: #fff; background: #000; }
-        
-        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 24px; line-height: 1.3; margin-top: 20px; }
-        .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 15px; display: flex; align-items: center; gap: 8px; background: #F8FAFC; padding: 8px 14px; border-radius: 8px; width: fit-content; border: 1px solid var(--border); font-weight: 600;}
+        /* REUSABLE LISTS (Hall of Fame, Events) */
+        .spotlight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .events-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
 
-        /* OTHER TABS */
-        .lb-container { width: 100%; max-width: 900px; margin: 0 auto; padding: 40px; }
-        .sub-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-shrink: 0; flex-wrap: wrap;}
-        .sub-btn { padding: 6px 16px; font-size: 12px; font-family: 'JetBrains Mono'; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; color: var(--text-sub); transition: 0.2s; }
-        .sub-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
-        .list-row { display: flex; align-items: center; background: #fff; padding: 12px 20px; border-radius: 12px; border: 1px solid var(--border); transition: 0.2s; margin-bottom: 8px;}
-        .list-row:hover { transform: translateX(5px); border-color: var(--brand); }
-        
-        .lb-podium { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-bottom: 40px; min-height: 220px; }
-        .podium-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 15px; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; width: 140px; transition: 0.3s; }
-        .podium-card.rank-1 { height: 210px; border-color: #FFD700; z-index: 2; background: linear-gradient(to bottom, #fff, #FFFBEB); }
-        .p-rank { position: absolute; top: -12px; width: 26px; height: 26px; border-radius: 50%; background: #0F172A; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; border: 2px solid #fff; }
-        .rank-1 .p-rank { background: #FFD700; color: #000; font-size: 14px; width: 32px; height: 32px; top: -16px;}
-        .p-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .rank-1 .p-avatar { width: 70px; height: 70px; border: 3px solid #FFD700; }
-        .p-name { font-weight: 700; font-size: 13px; margin-bottom: 5px; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%;}
-        .p-points { font-family: 'JetBrains Mono'; font-weight: 700; color: var(--brand); font-size: 12px; }
-
-        .row-rank { font-family: 'Manrope'; font-weight: 800; font-size: 14px; color: var(--text-sub); width: 30px; }
-        .row-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
-        .row-role-tag { font-size: 10px; font-weight: 600; color: var(--text-sub); display: flex; align-items: center; gap: 6px;}
-        .role-dot { width: 6px; height: 6px; border-radius: 50%; }
-        .row-points { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 13px; color: var(--text-main); }
-        
-        .spotlight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; margin: 0 auto; padding: 40px; }
-        .spot-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column; }
-        .spot-card:hover { transform: translateY(-3px); border-color: var(--brand); box-shadow: 0 10px 20px rgba(127,47,255,0.08); }
-        .spot-img-container { width: 100%; height: 160px; background: #F8FAFC; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border); overflow: hidden; }
-        .spot-img { width: 100%; height: 100%; object-fit: cover; }
-        .spot-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
-        .spot-title { font-family: 'Manrope'; font-weight: 700; font-size: 16px; margin-bottom: 10px; line-height: 1.4; flex-grow: 1; }
-        .spot-link { margin-top: 15px; font-size: 12px; font-weight: 600; text-decoration: none; color: var(--text-main); display: flex; align-items: center; gap: 6px; padding-top: 15px; border-top: 1px solid #F1F5F9; }
-
-        .events-container { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 16px; margin: 0 auto; padding: 40px; }
-        .event-card { display: flex; align-items: center; gap: 20px; padding: 20px; background: #fff; border: 1px solid var(--border); border-radius: 16px; transition: 0.2s; }
-        .event-card:hover { border-color: var(--brand); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .date-badge { width: 60px; height: 60px; background: #F8FAFC; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .d-num { font-weight: 800; font-size: 18px; font-family: 'Manrope'; }
-        .d-mon { font-size: 10px; font-weight: 700; color: var(--brand); }
-        .cal-btn { background: #0F172A; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; margin-left: auto; }
-
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
             .dash-container { grid-template-columns: 1fr; }
             .dash-right { display: none; }
-            .res-grid { grid-template-columns: 1fr; }
-            .widgets-row { grid-template-columns: 1fr; }
-            .interface { height: auto; min-height: 100vh; border-radius: 0; width: 100%; margin: 0; }
+            .res-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -200,9 +137,8 @@
     <div class="interface">
         <header>
             <div class="logo-group">
-                <!-- ВСТАВЬТЕ ССЫЛКУ НА ВАШ ЛОГОТИП НИЖЕ В src="" -->
-                <img src="https://placehold.co/40x40?text=Pi2" alt="Pi2" class="custom-logo">
-                <div class="logo-text" style="font-family:'Manrope'; font-weight:800; font-size:22px;">Pi Squared</div>
+                <img src="https://placehold.co/40x40?text=Logo" alt="Pi2 Logo" class="custom-logo">
+                <div class="logo-text">Pi Squared</div>
             </div>
             <div class="badge"><div class="dot"></div>Community Hub</div>
         </header>
@@ -214,270 +150,122 @@
             <button class="nav-btn" onclick="switchTab('leaderboard')">Leaderboard</button>
         </nav>
 
-        <div class="screen">
+        <div class="screen" id="main-screen">
             
             <!-- 1. DASHBOARD -->
             <div id="tab-dashboard" class="tab-content active">
                 <div class="dash-container">
-                    
-                    <!-- LEFT SIDE (Main) -->
                     <div class="dash-left">
-                        <div class="dash-wrapper">
-                            
-                            <!-- Section 1: Quick Access -->
-                            <div>
-                                <div class="section-title">QUICK ACCESS</div>
-                                <div class="res-grid">
-                                    <a href="https://pi2.network/" target="_blank" class="res-card">
-                                        <div class="res-icon"><i class="fa-solid fa-globe"></i></div>
-                                        <div><div style="font-weight:700; font-size:15px;">Official Website</div><div style="font-size:12px;color:gray;">pi2.network</div></div>
-                                    </a>
-                                    <a href="https://docs.pi2.network/" target="_blank" class="res-card">
-                                        <div class="res-icon"><i class="fa-solid fa-book-open"></i></div>
-                                        <div><div style="font-weight:700; font-size:15px;">Documentation</div><div style="font-size:12px;color:gray;">Developer Docs</div></div>
-                                    </a>
-                                    <a href="https://discord.com/invite/NdBJBZMz4e" target="_blank" class="res-card">
-                                        <div class="res-icon"><i class="fa-brands fa-discord"></i></div>
-                                        <div><div style="font-weight:700; font-size:15px;">Discord</div><div style="font-size:12px;color:gray;">Community Chat</div></div>
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="section-title">Quick Access</div>
+                        <div class="res-grid">
+                            <a href="https://pi2.network/" target="_blank" class="res-card">
+                                <div class="res-icon"><i class="fa-solid fa-globe"></i></div>
+                                <div><div style="font-weight:700; font-size:14px;">Official Website</div></div>
+                            </a>
+                            <a href="https://docs.pi2.network/" target="_blank" class="res-card">
+                                <div class="res-icon"><i class="fa-solid fa-book-open"></i></div>
+                                <div><div style="font-weight:700; font-size:14px;">Documentation</div></div>
+                            </a>
+                            <a href="https://discord.com/invite/NdBJBZMz4e" target="_blank" class="res-card">
+                                <div class="res-icon"><i class="fa-brands fa-discord"></i></div>
+                                <div><div style="font-weight:700; font-size:14px;">Discord</div></div>
+                            </a>
+                        </div>
 
-                            <!-- Section 2: Live Status -->
-                            <div>
-                                <div class="section-title">LIVE STATUS</div>
-                                <div class="widgets-row">
-                                    <!-- Widget: Next Event -->
-                                    <div class="dash-widget" onclick="switchTab('events')">
-                                        <div class="widget-label"><span>Next Event</span> <i class="fa-solid fa-calendar"></i></div>
-                                        <div id="dash-event-title" class="next-event-title">Loading...</div>
-                                        <div id="dash-event-time" class="next-event-time">...</div>
-                                    </div>
-                                    
-                                    <!-- Widget: Top Leader -->
-                                    <div class="dash-widget" onclick="switchTab('leaderboard')">
-                                        <div id="leader-banner" class="leader-banner"></div>
-                                        <div class="widget-label"><span>Top Contributor</span> <i class="fa-solid fa-trophy" style="color:#FFD700; z-index:2"></i></div>
-                                        <div class="leader-widget-content">
-                                            <div class="leader-avatar-wrapper">
-                                                <img id="dash-top-avatar" class="top-leader-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' fill='%23eee'/%3E%3C/svg%3E">
-                                            </div>
-                                            <div id="dash-top-user" class="top-leader-name">Loading...</div>
-                                            <div id="dash-top-role" class="top-leader-role">RANK #1</div>
-                                        </div>
+                        <div class="section-title">Live Status</div>
+                        <div class="widgets-row">
+                            <div class="dash-widget" onclick="switchTab('events')">
+                                <div style="font-size:10px; font-weight:700; color:var(--text-sub); text-transform:uppercase;">Next Event</div>
+                                <div id="dash-event-title" style="font-family:'Manrope'; font-weight:800; font-size:20px; margin-top:1rem;">Loading...</div>
+                                <div id="dash-event-time" style="font-size:12px; color:var(--text-sub); margin-top:0.5rem;"></div>
+                            </div>
+                            <div class="dash-widget" onclick="switchTab('leaderboard')">
+                                <div style="font-size:10px; font-weight:700; color:var(--text-sub); text-transform:uppercase;">Top Contributor</div>
+                                <div style="display:flex; align-items:center; gap:12px; margin-top:1rem;">
+                                    <img id="dash-top-avatar" src="" style="width:48px; height:48px; border-radius:50%; background:#eee;">
+                                    <div>
+                                        <div id="dash-top-user" style="font-weight:700;">Loading...</div>
+                                        <div id="dash-top-role" style="font-size:11px; color:var(--brand);">...</div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
-                    <!-- RIGHT SIDE (Twitter) -->
                     <div class="dash-right">
-                        <a class="twitter-timeline" data-height="800" data-theme="light" data-chrome="noheader nofooter transparent" href="https://twitter.com/PiSquared?ref_src=twsrc%5Etfw">
-                            <div style="padding:40px; text-align:center; color:#aaa;">Loading Tweets...</div>
-                        </a> 
+                        <a class="twitter-timeline" data-theme="light" data-chrome="noheader nofooter transparent" href="https://twitter.com/PiSquared?ref_src=twsrc%5Etfw"></a> 
                         <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. HALL OF FAME -->
+            <!-- OTHER TABS (Hall of Fame, Events, Leaderboard) -->
             <div id="tab-spotlight" class="tab-content">
-                <div id="spotlight-container" class="spotlight-grid">
-                    <div style="grid-column:1/-1; text-align:center; color:#999;">Loading...</div>
-                </div>
+                <div id="spotlight-container" class="spotlight-grid"></div>
             </div>
-
-            <!-- 3. EVENTS -->
             <div id="tab-events" class="tab-content">
-                <div id="events-container" class="events-container">
-                    <div style="text-align:center; color:#999;">Loading...</div>
-                </div>
+                <div id="events-container" class="events-container"></div>
             </div>
-
-            <!-- 4. LEADERBOARD -->
             <div id="tab-leaderboard" class="tab-content">
-                <div class="lb-container">
-                    <div class="sub-nav">
-                        <button class="sub-btn active" onclick="filterLeaderboard('All', this)">All</button>
-                        <button class="sub-btn" onclick="filterLeaderboard('Harmony', this)">Harmony</button>
-                        <button class="sub-btn" onclick="filterLeaderboard('Luminary', this)">Luminary</button>
-                        <button class="sub-btn" onclick="filterLeaderboard('Catalyst', this)">Catalyst</button>
-                        <button class="sub-btn" onclick="filterLeaderboard('Neophyte', this)">Neophyte</button>
-                    </div>
-                    <div id="lb-podium" class="lb-podium"></div>
-                    <div id="lb-list" class="lb-list"></div>
-                </div>
+                <div class="lb-container" id="lb-list"></div>
             </div>
 
         </div>
     </div>
 
     <script>
-        // === КОНФИГУРАЦИЯ SUPABASE ===
         const SUPABASE_URL = 'https://opaflgqsawxkoeptszwt.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wYWZsZ3FzYXd4a29lcHRzend0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5NzA5MDcsImV4cCI6MjA4MTU0NjkwN30.PwKgM49pValst9gSSDWCWJrfsCkD5JXQXB4qh9OSAJY';
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const ROLES = {
-            "Harmony": { color: "#7928CA", label: "Harmony" },
-            "Luminary": { color: "#F59E0B", label: "Luminary" },
-            "Catalyst": { color: "#7F2FFF", label: "Catalyst" },
-            "Neophyte": { color: "#3B82F6", label: "Neophyte" },
-            "Neophyte-temp": { color: "#94A3B8", label: "Neophyte-temp" }
-        };
-
         let data = { spotlight: [], events: [], leaderboard: [] };
-        let currentLbFilter = 'All';
-
-        document.addEventListener('DOMContentLoaded', init);
 
         async function init() {
-            try {
-                if(window.particlesJS) {
-                    particlesJS("particles-js", {"particles":{"number":{"value":25},"color":{"value":"#7F2FFF"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":false},"move":{"speed":0.5}}});
-                }
-            } catch(e) {}
-
-            renderDashboard();
-            renderHub();
-            renderLeaderboard();
-            
-            await fetchData();
-            
-            renderDashboard();
-            renderHub();
-            renderLeaderboard();
+            try { particlesJS("particles-js", {"particles":{"number":{"value":20},"color":{"value":"#7F2FFF"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":false},"move":{"speed":0.5}}}); } catch(e){}
+            await refreshData();
         }
 
-        async function fetchData() {
-            let { data: sData } = await client.from('spotlight').select('*').order('id', {ascending: false});
-            if(sData) data.spotlight = sData;
-
-            let { data: eData } = await client.from('events').select('*').order('sort_date', {ascending: true});
-            if(eData) data.events = eData;
-
-            let { data: lData } = await client.from('leaderboard').select('*');
-            if(lData) data.leaderboard = lData;
+        async function refreshData() {
+            const { data: s } = await client.from('spotlight').select('*').order('id', {ascending: false});
+            const { data: e } = await client.from('events').select('*').order('sort_date', {ascending: true});
+            const { data: l } = await client.from('leaderboard').select('*').order('points', {ascending: false});
+            
+            data = { spotlight: s || [], events: e || [], leaderboard: l || [] };
+            renderAll();
         }
 
-        // --- DASHBOARD ---
-        function renderDashboard() {
-            if(data.events.length > 0) {
-                const ev = data.events[0];
-                document.getElementById('dash-event-title').innerText = ev.title || "Event";
-                document.getElementById('dash-event-time').innerHTML = `<i class="fa-regular fa-clock"></i> ${ev.day} ${ev.month} • ${ev.time}`;
-            } else {
-                document.getElementById('dash-event-title').innerText = "No upcoming events";
+        function renderAll() {
+            // Dashboard Update
+            if(data.events[0]) {
+                document.getElementById('dash-event-title').innerText = data.events[0].title;
+                document.getElementById('dash-event-time').innerText = `${data.events[0].day} ${data.events[0].month} • ${data.events[0].time}`;
             }
-            
-            if(data.leaderboard.length > 0) {
-                const sorted = [...data.leaderboard].sort((a,b) => b.points - a.points);
-                const top = sorted[0];
+            if(data.leaderboard[0]) {
+                const top = data.leaderboard[0];
                 document.getElementById('dash-top-user').innerText = top.username;
-                const roleInfo = ROLES[top.role] || ROLES["Neophyte"];
-                const roleEl = document.getElementById('dash-top-role');
-                roleEl.innerText = "● " + top.role;
-                roleEl.style.color = roleInfo.color;
-                document.getElementById('leader-banner').style.background = roleInfo.color;
-                
-                const avatarUrl = top.handle ? `https://unavatar.io/twitter/${top.handle}` : (top.avatar || '');
-                if(avatarUrl) {
-                     document.getElementById('dash-top-avatar').src = avatarUrl;
-                     document.getElementById('dash-top-avatar').style.borderColor = roleInfo.color;
-                }
-            } else {
-                document.getElementById('dash-top-user').innerText = "Loading...";
-            }
-        }
-
-        // --- HUB ---
-        function renderHub() {
-            const sCont = document.getElementById('spotlight-container');
-            if(data.spotlight.length > 0) {
-                sCont.innerHTML = data.spotlight.map(item => {
-                    if(item.status === 'processing') return `<div class="spot-card"><div class="spot-body" style="color:#aaa;">Fetching metadata...</div></div>`;
-                    const img = item.img;
-                    const imgHtml = img ? `<img src="${img}" class="spot-img">` : `<div class="spot-img-container"><div class="spot-placeholder">π²</div></div>`;
-                    return `<div class="spot-card"><div class="spot-img-container">${imgHtml}</div><div class="spot-body"><span class="spot-tag">${item.tag||"News"}</span><div class="spot-title">${item.title}</div><a href="${item.link||'#'}" target="_blank" class="spot-link"><i class="fa-solid fa-link"></i> ${item.author || "Source"}</a></div></div>`;
-                }).join('');
+                document.getElementById('dash-top-role').innerText = top.role;
+                document.getElementById('dash-top-avatar').src = top.handle ? `https://unavatar.io/twitter/${top.handle}` : top.avatar;
             }
 
-            const eCont = document.getElementById('events-container');
-            if(data.events.length > 0) {
-                eCont.innerHTML = data.events.map(ev => {
-                    return `<div class="event-card"><div class="date-badge"><span class="d-num">${ev.day}</span><span class="d-mon">${ev.month}</span></div><div class="event-details"><div class="event-title">${ev.title}</div><div class="event-meta"><i class="fa-regular fa-clock"></i> ${ev.time}</div></div><a href="${ev.link}" target="_blank" class="cal-btn">Join</a></div>`;
-                }).join('');
-            }
-        }
-
-        // --- LEADERBOARD ---
-        function filterLeaderboard(role, btn) {
-            currentLbFilter = role;
-            document.querySelectorAll('.sub-nav .sub-btn').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-            renderLeaderboard();
-        }
-
-        function renderLeaderboard() {
-            let list = [...data.leaderboard];
-            list.sort((a, b) => b.points - a.points);
-            
-            if(currentLbFilter !== 'All') {
-                list = list.filter(u => u.role === currentLbFilter);
-            }
-
-            const podiumEl = document.getElementById('lb-podium');
-            const listEl = document.getElementById('lb-list');
-            
-            if(list.length === 0) {
-                podiumEl.innerHTML = ''; listEl.innerHTML = '<div style="text-align:center; padding:20px; color:#aaa;">No agents found.</div>';
-                return;
-            }
-
-            let top3 = list.slice(0, 3);
-            let rest = list.slice(3);
-            
-            let podiumHTML = '';
-            const podiumOrder = [top3[1], top3[0], top3[2]].filter(x => x); 
-            
-            podiumHTML = podiumOrder.map(u => {
-                const rank = list.indexOf(u) + 1; 
-                const roleData = ROLES[u.role] || { color: '#ccc', label: u.role };
-                const avSrc = u.handle ? `https://unavatar.io/twitter/${u.handle}` : u.avatar;
-                const av = avSrc ? `<img src="${avSrc}" class="p-avatar">` : `<div class="p-avatar" style="background:${roleData.color}; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:20px;">${u.username[0]}</div>`;
-                
-                return `
-                <div class="podium-card rank-${rank}">
-                    <div class="p-rank">${rank}</div>
-                    ${av}
-                    <div class="p-name">${u.username}</div>
-                    <div class="p-points">${u.points} XP</div>
-                    <div class="p-role" style="background:${roleData.color}; color:white; padding:2px 8px; border-radius:10px; font-size:10px; margin-top:5px;">${roleData.label}</div>
-                </div>`;
-            }).join('');
-            podiumEl.innerHTML = podiumHTML;
-
-            listEl.innerHTML = rest.map((u, index) => {
-                const rank = index + 4;
-                const roleData = ROLES[u.role] || { color: '#ccc', label: u.role };
-                const avSrc = u.handle ? `https://unavatar.io/twitter/${u.handle}` : u.avatar;
-                const av = avSrc ? `<img src="${avSrc}" class="row-avatar">` : `<div class="row-avatar" style="background:${roleData.color}; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700;">${u.username[0]}</div>`;
-                
-                return `
-                <div class="list-row">
-                    <div class="row-rank">#${rank}</div>
-                    ${av}
-                    <div class="row-info" style="flex:1">
-                        <div class="row-name" style="font-weight:700">${u.username}</div>
-                        <div class="row-role-tag"><div class="role-dot" style="background:${roleData.color}"></div> ${roleData.label}</div>
+            // Tabs Update
+            document.getElementById('spotlight-container').innerHTML = data.spotlight.map(i => `
+                <div class="spot-card">
+                    <div class="spot-img-container"><img src="${i.img}" class="spot-img" onerror="this.style.display='none'"></div>
+                    <div class="spot-body">
+                        <span class="spot-tag">${i.tag}</span>
+                        <div class="spot-title">${i.title}</div>
+                        <a href="${i.link}" target="_blank" class="spot-link"><i class="fa-solid fa-link"></i> ${i.author}</a>
                     </div>
-                    <div class="row-stats">
-                        <div class="row-points">${u.points} XP</div>
-                    </div>
-                </div>`;
-            }).join('');
+                </div>
+            `).join('');
+
+            document.getElementById('events-container').innerHTML = data.events.map(ev => `
+                <div class="event-card">
+                    <div class="date-badge"><span class="d-num">${ev.day}</span><span class="d-mon">${ev.month}</span></div>
+                    <div class="event-details"><div class="event-title">${ev.title}</div><div style="font-size:12px; color:var(--text-sub)">${ev.time}</div></div>
+                    <a href="${ev.link}" target="_blank" class="cal-btn">Join</a>
+                </div>
+            `).join('');
         }
 
         window.switchTab = (id) => {
@@ -485,7 +273,11 @@
             event.currentTarget.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById('tab-' + id).classList.add('active');
+            // Reset scroll position on tab switch
+            document.getElementById('main-screen').scrollTop = 0;
         }
+
+        init();
     </script>
 </body>
 </html>
