@@ -39,7 +39,8 @@
         }
 
         .interface {
-            position: relative; z-index: 10; width: 95%; max-width: 1200px; height: 90vh;
+            position: relative; z-index: 10; width: 95%; max-width: 1400px; /* Увеличил макс. ширину для простора */
+            height: 90vh;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px);
             border: 1px solid #fff; border-radius: var(--radius);
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
@@ -49,6 +50,15 @@
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); background: #fff; flex-shrink: 0; }
         .logo-group { display: flex; align-items: center; gap: 12px; }
+        
+        /* Стили для вашего логотипа */
+        .custom-logo {
+            height: 40px; /* Высота логотипа */
+            width: auto;
+            border-radius: 8px; /* Если нужно скругление */
+            object-fit: contain;
+        }
+
         .badge { background: var(--brand-light); color: var(--brand); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(127,47,255,0.1); }
         .dot { width: 6px; height: 6px; background: #10B981; border-radius: 50%; }
 
@@ -68,19 +78,24 @@
         .tab-content.active { display: flex; flex-direction: column; opacity: 1; }
         #tab-dashboard.active { display: block; padding: 0; } 
 
-        /* DASHBOARD */
-        .dash-container { display: grid; grid-template-columns: 1.2fr 0.8fr; height: 100%; width: 100%; }
-        .dash-left { padding: 30px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+        /* DASHBOARD (ИСПРАВЛЕННАЯ СЕТКА) */
+        .dash-container { 
+            display: grid; 
+            /* ЛЕВАЯ ЧАСТЬ (1fr) берет все место, ПРАВАЯ (380px) фиксирована */
+            grid-template-columns: 1fr 380px; 
+            height: 100%; width: 100%; 
+        }
+        .dash-left { padding: 40px; display: flex; flex-direction: column; gap: 24px; overflow-y: auto; }
         .dash-right { background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden; position: relative;}
 
-        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 240px; }
+        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 260px; }
         .dash-widget {
             background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 24px;
             display: flex; flex-direction: column; justify-content: space-between;
             transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
         }
         .dash-widget:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
-        .widget-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; justify-content: space-between; z-index: 2; position: relative; }
+        .widget-label { font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; justify-content: space-between; z-index: 2; position: relative; }
         
         .leader-widget-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; position: relative; z-index: 2; }
         .leader-banner { position: absolute; top: 0; left: 0; width: 100%; height: 90px; background: var(--brand-light); opacity: 0.6; z-index: 1; }
@@ -88,11 +103,11 @@
         .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 18px; margin-bottom: 5px; }
         .top-leader-role { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: #fff; background: #000; }
         
-        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 20px; line-height: 1.3; }
-        .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 10px; display: flex; align-items: center; gap: 8px; background: #F8FAFC; padding: 8px 12px; border-radius: 8px; width: fit-content; border: 1px solid var(--border); }
+        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 22px; line-height: 1.3; }
+        .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 15px; display: flex; align-items: center; gap: 8px; background: #F8FAFC; padding: 8px 12px; border-radius: 8px; width: fit-content; border: 1px solid var(--border); }
 
         /* LEADERBOARD */
-        .lb-container { width: 100%; max-width: 800px; margin: 0 auto; }
+        .lb-container { width: 100%; max-width: 900px; margin: 0 auto; }
         .sub-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-shrink: 0; flex-wrap: wrap;}
         .sub-btn { padding: 6px 16px; font-size: 12px; font-family: 'JetBrains Mono'; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; color: var(--text-sub); transition: 0.2s; }
         .sub-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
@@ -114,18 +129,19 @@
         .role-dot { width: 6px; height: 6px; border-radius: 50%; }
         .row-points { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 14px; color: var(--text-main); }
         
-        /* Resource Links & Cards (Same as before) */
+        /* Resource Links & Cards */
         .res-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px; }
-        .res-card { display: flex; align-items: center; gap: 16px; padding: 16px; background: #fff; border: 1px solid var(--border); border-radius: 16px; text-decoration: none; color: var(--text-main); transition: 0.2s; }
-        .res-card:hover { border-color: var(--brand); transform: translateX(4px); }
-        .res-icon { width: 36px; height: 36px; background: #F5F0FF; color: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .res-card { display: flex; align-items: center; gap: 16px; padding: 20px; background: #fff; border: 1px solid var(--border); border-radius: 16px; text-decoration: none; color: var(--text-main); transition: 0.2s; }
+        .res-card:hover { border-color: var(--brand); transform: translateX(4px); box-shadow: 0 5px 15px rgba(127,47,255,0.05); }
+        .res-icon { width: 40px; height: 40px; background: #F5F0FF; color: var(--brand); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         
         /* Spotlight */
-        .spotlight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; width: 100%; }
+        .spotlight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; width: 100%; max-width: 1000px; margin: 0 auto; }
         .spot-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column; }
-        .spot-img-container { width: 100%; height: 160px; background: #F8FAFC; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border); overflow: hidden; }
+        .spot-card:hover { transform: translateY(-5px); border-color: var(--brand); box-shadow: 0 10px 20px rgba(127,47,255,0.08); }
+        .spot-img-container { width: 100%; height: 180px; background: #F8FAFC; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border); overflow: hidden; }
         .spot-img { width: 100%; height: 100%; object-fit: cover; }
-        .spot-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .spot-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
         .spot-tag { font-family: 'JetBrains Mono'; font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--brand); background: var(--brand-light); padding: 4px 8px; border-radius: 4px; margin-bottom: 10px; display: inline-block; width: fit-content; }
         .spot-title { font-family: 'Manrope'; font-weight: 700; font-size: 16px; margin-bottom: 10px; line-height: 1.4; flex-grow: 1; }
         .spot-link { margin-top: 15px; font-size: 12px; font-weight: 600; text-decoration: none; color: var(--text-main); display: flex; align-items: center; gap: 6px; padding-top: 15px; border-top: 1px solid #F1F5F9; }
@@ -133,6 +149,7 @@
         /* Events */
         .events-container { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 16px; margin: 0 auto; }
         .event-card { display: flex; align-items: center; gap: 20px; padding: 20px; background: #fff; border: 1px solid var(--border); border-radius: 16px; transition: 0.2s; }
+        .event-card:hover { border-color: var(--brand); box-shadow: var(--shadow); }
         .date-badge { width: 60px; height: 60px; background: #F8FAFC; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .d-num { font-weight: 800; font-size: 18px; font-family: 'Manrope'; }
         .cal-btn { background: #0F172A; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; }
@@ -152,11 +169,9 @@
     <div class="interface">
         <header>
             <div class="logo-group">
-                <svg width="32" height="32" viewBox="0 0 100 100" style="border-radius:8px; background:black; padding:4px;">
-                  <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-size="60" fill="white" font-family="serif" font-style="italic">π</text>
-                  <text x="75%" y="25%" dominant-baseline="central" text-anchor="middle" font-size="40" fill="white" font-weight="bold">2</text>
-                </svg>
-                <div style="font-family:'Manrope'; font-weight:800; font-size:20px;">Pi Squared</div>
+                <!-- ВСТАВЬТЕ ССЫЛКУ НА ВАШ ЛОГОТИП НИЖЕ В src="" -->
+                <img src="https://pbs.twimg.com/profile_images/1819428487104454657/HS3g_7bM_400x400.jpg" alt="Pi Squared Logo" class="custom-logo">
+                <div style="font-family:'Manrope'; font-weight:800; font-size:22px;">Pi Squared</div>
             </div>
             <div class="badge"><div class="dot"></div>Community Hub</div>
         </header>
@@ -196,7 +211,7 @@
                                 <div class="widget-label"><span>Top Contributor</span> <i class="fa-solid fa-trophy" style="color:#FFD700; z-index:2"></i></div>
                                 <div class="leader-widget-content">
                                     <div class="leader-avatar-wrapper">
-                                        <i class="fa-solid fa-crown leader-crown"></i>
+                                        <i class="fa-solid fa-crown leader-crown" style="display:none;"></i>
                                         <img id="dash-top-avatar" class="top-leader-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' fill='%23eee'/%3E%3C/svg%3E">
                                     </div>
                                     <div id="dash-top-user" class="top-leader-name">Loading...</div>
@@ -285,22 +300,17 @@
         }
 
         async function fetchData() {
-            // 1. Spotlight
             let { data: sData } = await client.from('spotlight').select('*').order('id', {ascending: false});
             if(sData) data.spotlight = sData;
 
-            // 2. Events
             let { data: eData } = await client.from('events').select('*').order('sort_date', {ascending: true});
             if(eData) data.events = eData;
 
-            // 3. Leaderboard
             let { data: lData } = await client.from('leaderboard').select('*');
             if(lData) data.leaderboard = lData;
         }
 
-        // --- DASHBOARD ---
         function renderDashboard() {
-            // Event
             if(data.events.length > 0) {
                 const ev = data.events[0];
                 document.getElementById('dash-event-title').innerText = ev.title || "Event";
@@ -309,23 +319,15 @@
                 document.getElementById('dash-event-title').innerText = "No upcoming events";
             }
             
-            // Leader
             if(data.leaderboard.length > 0) {
-                // Sort by points desc
                 const sorted = [...data.leaderboard].sort((a,b) => b.points - a.points);
                 const top = sorted[0];
-                
                 document.getElementById('dash-top-user').innerText = top.username;
-                
                 const roleInfo = ROLES[top.role] || ROLES["Neophyte"];
                 const roleEl = document.getElementById('dash-top-role');
                 roleEl.innerText = "● " + top.role;
-                roleEl.style.background = "#000";
                 roleEl.style.color = roleInfo.color;
-                
                 document.getElementById('leader-banner').style.background = roleInfo.color;
-                
-                // Smart Avatar (Using unavatar for Twitter handles)
                 const avatarUrl = top.handle ? `https://unavatar.io/twitter/${top.handle}` : (top.avatar || '');
                 if(avatarUrl) {
                      document.getElementById('dash-top-avatar').src = avatarUrl;
@@ -336,22 +338,17 @@
             }
         }
 
-        // --- HUB ---
         function renderHub() {
-            // Spotlight
             const sCont = document.getElementById('spotlight-container');
             if(data.spotlight.length > 0) {
                 sCont.innerHTML = data.spotlight.map(item => {
-                    // Check if processing
                     if(item.status === 'processing') return `<div class="spot-card"><div class="spot-body" style="color:#aaa;">Fetching metadata...</div></div>`;
-
                     const img = item.img;
                     const imgHtml = img ? `<img src="${img}" class="spot-img">` : `<div class="spot-img-container"><div class="spot-placeholder">π²</div></div>`;
                     return `<div class="spot-card"><div class="spot-img-container">${imgHtml}</div><div class="spot-body"><span class="spot-tag">${item.tag||"News"}</span><div class="spot-title">${item.title}</div><a href="${item.link||'#'}" target="_blank" class="spot-link"><i class="fa-solid fa-link"></i> ${item.author || "Source"}</a></div></div>`;
                 }).join('');
             }
 
-            // Events
             const eCont = document.getElementById('events-container');
             if(data.events.length > 0) {
                 eCont.innerHTML = data.events.map(ev => {
@@ -360,7 +357,6 @@
             }
         }
 
-        // --- LEADERBOARD ---
         function filterLeaderboard(role, btn) {
             currentLbFilter = role;
             document.querySelectorAll('.sub-nav .sub-btn').forEach(b => b.classList.remove('active'));
@@ -384,7 +380,6 @@
                 return;
             }
 
-            // Top 3
             let top3 = list.slice(0, 3);
             let rest = list.slice(3);
             
@@ -403,38 +398,32 @@
                     ${av}
                     <div class="p-name">${u.username}</div>
                     <div class="p-points">${u.points} XP</div>
-                    <div class="p-role" style="background:${roleData.color}">${roleData.label}</div>
+                    <div class="p-role" style="background:${roleData.color}; color:white; padding:2px 8px; border-radius:10px; font-size:10px; margin-top:5px;">${roleData.label}</div>
                 </div>`;
             }).join('');
             podiumEl.innerHTML = podiumHTML;
 
-            // List
             listEl.innerHTML = rest.map((u, index) => {
                 const rank = index + 4;
                 const roleData = ROLES[u.role] || { color: '#ccc', label: u.role };
                 const avSrc = u.handle ? `https://unavatar.io/twitter/${u.handle}` : u.avatar;
                 const av = avSrc ? `<img src="${avSrc}" class="row-avatar">` : `<div class="row-avatar" style="background:${roleData.color}; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700;">${u.username[0]}</div>`;
                 
-                let changeClass = 'neu';
-                if(u.change && u.change.includes('+')) changeClass = 'pos';
-
                 return `
                 <div class="list-row">
                     <div class="row-rank">#${rank}</div>
                     ${av}
-                    <div class="row-info">
-                        <div class="row-name">${u.username}</div>
+                    <div class="row-info" style="flex:1">
+                        <div class="row-name" style="font-weight:700">${u.username}</div>
                         <div class="row-role-tag"><div class="role-dot" style="background:${roleData.color}"></div> ${roleData.label}</div>
                     </div>
                     <div class="row-stats">
                         <div class="row-points">${u.points} XP</div>
-                        <div class="row-change ${changeClass}">${u.change || '-'}</div>
                     </div>
                 </div>`;
             }).join('');
         }
 
-        // TABS
         window.switchTab = (id) => {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             event.currentTarget.classList.add('active');
