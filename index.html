@@ -17,7 +17,7 @@
             --text-main: #0F172A; --text-sub: #64748B;
             --brand: #7F2FFF; --brand-light: #F6F0FF;
             --border: #E2E8F0; --radius: 24px;
-            --shadow: 0 10px 40px -10px rgba(127, 47, 255, 0.08);
+            --shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.15);
             
             --role-harmony: linear-gradient(135deg, #FF0080, #7928CA);
             --role-luminary: linear-gradient(135deg, #F59E0B, #D97706);
@@ -33,40 +33,39 @@
             background-size: 30px 30px;
             color: var(--text-main); font-family: 'Inter', sans-serif;
             
-            /* ФИКС ЦЕНТРОВКИ */
-            display: grid;         /* Используем Grid вместо Flex для идеального центра */
-            place-items: center;   /* Центрирует и по вертикали, и по горизонтали */
-            min-height: 100vh;
-            width: 100%;
-            overflow: hidden;      /* Убираем скролл страницы, скролл будет внутри контейнера */
+            /* --- ФИНАЛЬНАЯ ФИКCАЦИЯ ЛЕЙАУТА --- */
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center; /* Центр по вертикали */
+            justify-content: center; /* Центр по горизонтали */
+            overflow: hidden; /* Запрещаем скролл самого окна браузера */
         }
 
-        /* --- ГЛАВНЫЙ КОНТЕЙНЕР --- */
         .interface {
-            position: relative; z-index: 10; 
+            position: relative; z-index: 10;
             
-            /* Размеры */
-            width: 95%; 
-            max-width: 1280px; /* Оптимальная ширина, чтобы не было "пустоты" */
-            height: 90vh; 
-            min-height: 650px;
+            /* --- ГЕОМЕТРИЯ --- */
+            /* Контейнер всегда занимает часть экрана, оставляя "воздух" */
+            width: 94vw; 
+            height: 88vh; 
             
-            /* Центровка */
-            margin: 0 auto; /* Страховка для горизонтального центра */
-            
+            /* Ограничители, чтобы на 4K мониторах не было слишком широко */
+            max-width: 1440px; 
+            max-height: 960px;
+            min-height: 600px; /* Чтобы на ноутбуках не сплющило */
+
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px);
             border: 1px solid #fff; border-radius: var(--radius);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow);
+            
             display: flex; flex-direction: column; overflow: hidden;
         }
 
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); background: #fff; flex-shrink: 0; }
         .logo-group { display: flex; align-items: center; gap: 12px; }
-        
-        /* Логотип */
-        .custom-logo { height: 36px; width: auto; object-fit: contain; }
-
+        .custom-logo { height: 36px; width: auto; }
         .badge { background: var(--brand-light); color: var(--brand); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(127,47,255,0.1); }
         .dot { width: 6px; height: 6px; background: #10B981; border-radius: 50%; }
 
@@ -80,42 +79,37 @@
         .nav-btn:hover { background: #fff; color: #000; transform: translateY(-1px); }
         .nav-btn.active { background: #0F172A; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
-        /* SCREEN */
-        .screen { flex: 1; position: relative; overflow: hidden; }
-        .tab-content { display: none; width: 100%; height: 100%; padding: 0; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease; }
+        /* SCREEN & TABS */
+        .screen { flex: 1; position: relative; overflow: hidden; } /* Занимает все оставшееся место */
+        .tab-content { 
+            display: none; 
+            width: 100%; height: 100%; 
+            padding: 0; 
+            overflow-y: auto; /* Скролл ВНУТРИ вкладки */
+            opacity: 0; transition: opacity 0.3s ease; 
+        }
         .tab-content.active { display: flex; flex-direction: column; opacity: 1; }
         #tab-dashboard.active { display: block; } 
 
         /* --- DASHBOARD LAYOUT --- */
         .dash-container { 
             display: grid; 
-            /* Фиксируем правую колонку (Твиттер), остальное слева */
+            /* Фиксируем правую колонку (360px), левая (1fr) занимает остаток */
             grid-template-columns: 1fr 360px; 
             height: 100%; width: 100%; 
         }
         
         .dash-left { 
             padding: 40px; 
-            overflow-y: auto; 
-            display: flex; flex-direction: column; 
-            /* Центрируем контент внутри левой зоны */
-            align-items: center; 
+            overflow-y: auto; /* Левая часть скроллится отдельно */
+            display: flex; flex-direction: column; align-items: center; 
         }
 
-        .dash-wrapper {
-            width: 100%; 
-            max-width: 1000px; /* Чтобы контент не растягивался на всю ширину на 4k экранах */
-            display: flex; flex-direction: column; gap: 30px;
-        }
-
+        .dash-wrapper { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 30px; }
         .dash-right { background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden; position: relative;}
 
-        /* QUICK ACCESS CARDS */
-        .res-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 20px; 
-        }
+        /* CARDS & WIDGETS */
+        .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .res-card { 
             display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
             gap: 12px; padding: 20px; background: #fff; border: 1px solid var(--border); 
@@ -124,14 +118,7 @@
         .res-card:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
         .res-icon { width: 40px; height: 40px; background: #F5F0FF; color: var(--brand); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         
-        /* LIVE STATUS WIDGETS */
-        .widgets-row { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 20px; 
-            min-height: 280px; 
-        }
-        
+        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; min-height: 280px; }
         .dash-widget {
             background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 24px;
             display: flex; flex-direction: column; justify-content: space-between;
@@ -146,10 +133,10 @@
         .leader-widget-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; position: relative; z-index: 2; margin-top: 10px; }
         .leader-banner { position: absolute; top: 0; left: 0; width: 100%; height: 90px; background: var(--brand-light); opacity: 0.6; z-index: 1; }
         .top-leader-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background: #fff; margin-bottom: 12px; margin-top: 20px; position: relative; z-index: 2;}
-        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 20px; margin-bottom: 4px; }
-        .top-leader-role { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: #fff; background: #000; }
+        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 18px; margin-bottom: 4px; }
+        .top-leader-role { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: #fff; background: #000; }
         
-        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 24px; line-height: 1.3; margin-top: 20px; }
+        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 22px; line-height: 1.3; margin-top: 20px; }
         .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 15px; display: flex; align-items: center; gap: 8px; background: #F8FAFC; padding: 8px 14px; border-radius: 8px; width: fit-content; border: 1px solid var(--border); font-weight: 600;}
 
         /* OTHER TABS */
@@ -194,11 +181,13 @@
         .cal-btn { background: #0F172A; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; margin-left: auto; }
 
         @media (max-width: 900px) {
+            /* MOBILE ADAPTATION */
+            body { padding: 0; display: block; overflow: auto; height: auto;}
+            .interface { height: auto; min-height: 100vh; width: 100%; border-radius: 0; margin: 0; max-width: none; }
             .dash-container { grid-template-columns: 1fr; }
             .dash-right { display: none; }
             .res-grid { grid-template-columns: 1fr; }
             .widgets-row { grid-template-columns: 1fr; }
-            .interface { height: auto; min-height: 100vh; border-radius: 0; width: 100%; margin: 0; }
         }
     </style>
 </head>
@@ -210,7 +199,7 @@
         <header>
             <div class="logo-group">
                 <!-- ВСТАВЬТЕ ССЫЛКУ НА ВАШ ЛОГОТИП НИЖЕ В src="" -->
-                <img src="https://placehold.co/100x100?text=Pi2" alt="Pi2 Logo" class="custom-logo">
+                <img src="https://placehold.co/40x40?text=Pi2" alt="Pi2 Logo" class="custom-logo">
                 <div style="font-family:'Manrope'; font-weight:800; font-size:22px;">Pi Squared</div>
             </div>
             <div class="badge"><div class="dot"></div>Community Hub</div>
@@ -239,15 +228,15 @@
                                 <div class="res-grid">
                                     <a href="https://pi2.network/" target="_blank" class="res-card">
                                         <div class="res-icon"><i class="fa-solid fa-globe"></i></div>
-                                        <div><div style="font-weight:700; font-size:15px;">Official Website</div><div style="font-size:12px;color:gray;">pi2.network</div></div>
+                                        <div><div style="font-weight:700;">Official Website</div><div style="font-size:12px;color:gray;">pi2.network</div></div>
                                     </a>
                                     <a href="https://docs.pi2.network/" target="_blank" class="res-card">
                                         <div class="res-icon"><i class="fa-solid fa-book-open"></i></div>
-                                        <div><div style="font-weight:700; font-size:15px;">Documentation</div><div style="font-size:12px;color:gray;">Developer Docs</div></div>
+                                        <div><div style="font-weight:700;">Documentation</div><div style="font-size:12px;color:gray;">Developer Docs</div></div>
                                     </a>
                                     <a href="https://discord.com/invite/NdBJBZMz4e" target="_blank" class="res-card">
                                         <div class="res-icon"><i class="fa-brands fa-discord"></i></div>
-                                        <div><div style="font-weight:700; font-size:15px;">Discord</div><div style="font-size:12px;color:gray;">Community Chat</div></div>
+                                        <div><div style="font-weight:700;">Discord</div><div style="font-size:12px;color:gray;">Community Chat</div></div>
                                     </a>
                                 </div>
                             </div>
