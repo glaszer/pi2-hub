@@ -33,41 +33,45 @@
             background-size: 30px 30px;
             color: var(--text-main); font-family: 'Inter', sans-serif;
             
-            /* ИСПРАВЛЕНИЕ ВЫСОТЫ И СКРОЛЛА */
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            overflow-y: auto; /* Разрешаем скролл если не влезает */
-            padding: 20px; /* Отступы от краев экрана */
+            /* ФИКС ЦЕНТРОВКИ */
+            display: grid;         /* Используем Grid вместо Flex для идеального центра */
+            place-items: center;   /* Центрирует и по вертикали, и по горизонтали */
+            min-height: 100vh;
+            width: 100%;
+            overflow: hidden;      /* Убираем скролл страницы, скролл будет внутри контейнера */
         }
 
-        /* --- ГЛАВНЫЙ КОНТЕЙНЕР (FIXED) --- */
+        /* --- ГЛАВНЫЙ КОНТЕЙНЕР --- */
         .interface {
             position: relative; z-index: 10; 
-            width: 100%; max-width: 1320px; 
             
-            /* Умная высота: 90% экрана, но не меньше 650px и не больше 1200px */
+            /* Размеры */
+            width: 95%; 
+            max-width: 1280px; /* Оптимальная ширина, чтобы не было "пустоты" */
             height: 90vh; 
-            min-height: 650px; 
-            max-height: 1200px;
+            min-height: 650px;
+            
+            /* Центровка */
+            margin: 0 auto; /* Страховка для горизонтального центра */
             
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px);
             border: 1px solid #fff; border-radius: var(--radius);
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
             display: flex; flex-direction: column; overflow: hidden;
-            margin: auto;
         }
 
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); background: #fff; flex-shrink: 0; }
         .logo-group { display: flex; align-items: center; gap: 12px; }
-        .custom-logo { height: 36px; width: auto; }
+        
+        /* Логотип */
+        .custom-logo { height: 36px; width: auto; object-fit: contain; }
+
         .badge { background: var(--brand-light); color: var(--brand); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(127,47,255,0.1); }
         .dot { width: 6px; height: 6px; background: #10B981; border-radius: 50%; }
 
         /* NAV */
-        nav { display: flex; justify-content: center; gap: 8px; padding: 12px 40px; border-bottom: 1px solid var(--border); background: #F8FAFC; flex-shrink: 0; overflow-x: auto; }
+        nav { display: flex; justify-content: center; gap: 8px; padding: 16px 40px; border-bottom: 1px solid var(--border); background: #F8FAFC; flex-shrink: 0; overflow-x: auto; }
         .nav-btn {
             padding: 8px 24px; border: 1px solid transparent; background: transparent;
             font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--text-sub);
@@ -85,26 +89,33 @@
         /* --- DASHBOARD LAYOUT --- */
         .dash-container { 
             display: grid; 
+            /* Фиксируем правую колонку (Твиттер), остальное слева */
             grid-template-columns: 1fr 360px; 
             height: 100%; width: 100%; 
         }
         
         .dash-left { 
-            padding: 30px 40px; 
+            padding: 40px; 
             overflow-y: auto; 
             display: flex; flex-direction: column; 
+            /* Центрируем контент внутри левой зоны */
             align-items: center; 
         }
 
         .dash-wrapper {
-            width: 100%; max-width: 1000px; 
+            width: 100%; 
+            max-width: 1000px; /* Чтобы контент не растягивался на всю ширину на 4k экранах */
             display: flex; flex-direction: column; gap: 30px;
         }
 
         .dash-right { background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden; position: relative;}
 
-        /* QUICK ACCESS */
-        .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        /* QUICK ACCESS CARDS */
+        .res-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+        }
         .res-card { 
             display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
             gap: 12px; padding: 20px; background: #fff; border: 1px solid var(--border); 
@@ -113,8 +124,14 @@
         .res-card:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
         .res-icon { width: 40px; height: 40px; background: #F5F0FF; color: var(--brand); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         
-        /* LIVE STATUS */
-        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; min-height: 280px; }
+        /* LIVE STATUS WIDGETS */
+        .widgets-row { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            min-height: 280px; 
+        }
+        
         .dash-widget {
             background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 24px;
             display: flex; flex-direction: column; justify-content: space-between;
@@ -122,17 +139,17 @@
         }
         .dash-widget:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
         
-        .section-title { font-family: 'Manrope'; font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-left: 4px;}
+        .section-title { font-family: 'Manrope'; font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; padding-left: 4px;}
         .widget-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; display: flex; justify-content: space-between; z-index: 2; position: relative; letter-spacing: 0.5px;}
 
         /* WIDGET CONTENT */
         .leader-widget-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; position: relative; z-index: 2; margin-top: 10px; }
         .leader-banner { position: absolute; top: 0; left: 0; width: 100%; height: 90px; background: var(--brand-light); opacity: 0.6; z-index: 1; }
         .top-leader-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background: #fff; margin-bottom: 12px; margin-top: 20px; position: relative; z-index: 2;}
-        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 18px; margin-bottom: 4px; }
-        .top-leader-role { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: #fff; background: #000; }
+        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 20px; margin-bottom: 4px; }
+        .top-leader-role { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: #fff; background: #000; }
         
-        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 22px; line-height: 1.3; margin-top: 20px; }
+        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 24px; line-height: 1.3; margin-top: 20px; }
         .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 15px; display: flex; align-items: center; gap: 8px; background: #F8FAFC; padding: 8px 14px; border-radius: 8px; width: fit-content; border: 1px solid var(--border); font-weight: 600;}
 
         /* OTHER TABS */
@@ -193,7 +210,7 @@
         <header>
             <div class="logo-group">
                 <!-- ВСТАВЬТЕ ССЫЛКУ НА ВАШ ЛОГОТИП НИЖЕ В src="" -->
-                <img src="https://placehold.co/40x40?text=Pi2" alt="Pi2 Logo" class="custom-logo">
+                <img src="https://placehold.co/100x100?text=Pi2" alt="Pi2 Logo" class="custom-logo">
                 <div style="font-family:'Manrope'; font-weight:800; font-size:22px;">Pi Squared</div>
             </div>
             <div class="badge"><div class="dot"></div>Community Hub</div>
