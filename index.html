@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- SUPABASE SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     
@@ -17,7 +16,7 @@
             --text-main: #0F172A; --text-sub: #64748B;
             --brand: #7F2FFF; --brand-light: #F6F0FF;
             --border: #E2E8F0; --radius: 24px;
-            --shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.15);
+            --shadow: 0 10px 40px -10px rgba(127, 47, 255, 0.08);
             
             --role-harmony: linear-gradient(135deg, #FF0080, #7928CA);
             --role-luminary: linear-gradient(135deg, #F59E0B, #D97706);
@@ -33,39 +32,31 @@
             background-size: 30px 30px;
             color: var(--text-main); font-family: 'Inter', sans-serif;
             
-            /* --- ФИНАЛЬНАЯ ФИКCАЦИЯ ЛЕЙАУТА --- */
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            align-items: center; /* Центр по вертикали */
-            justify-content: center; /* Центр по горизонтали */
-            overflow: hidden; /* Запрещаем скролл самого окна браузера */
+            /* ЦЕНТРОВКА САМОГО ОКНА */
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            padding: 20px;
         }
 
+        /* --- ГЛАВНЫЙ КОНТЕЙНЕР --- */
         .interface {
             position: relative; z-index: 10;
+            /* Фиксируем размеры, чтобы не прыгало */
+            width: 100%; max-width: 1400px;
+            height: 90vh; min-height: 700px;
             
-            /* --- ГЕОМЕТРИЯ --- */
-            /* Контейнер всегда занимает часть экрана, оставляя "воздух" */
-            width: 94vw; 
-            height: 88vh; 
-            
-            /* Ограничители, чтобы на 4K мониторах не было слишком широко */
-            max-width: 1440px; 
-            max-height: 960px;
-            min-height: 600px; /* Чтобы на ноутбуках не сплющило */
-
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px);
             border: 1px solid #fff; border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.15);
             display: flex; flex-direction: column; overflow: hidden;
         }
 
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); background: #fff; flex-shrink: 0; }
         .logo-group { display: flex; align-items: center; gap: 12px; }
-        .custom-logo { height: 36px; width: auto; }
+        .custom-logo { height: 36px; width: auto; object-fit: contain; }
         .badge { background: var(--brand-light); color: var(--brand); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(127,47,255,0.1); }
         .dot { width: 6px; height: 6px; background: #10B981; border-radius: 50%; }
 
@@ -79,64 +70,77 @@
         .nav-btn:hover { background: #fff; color: #000; transform: translateY(-1px); }
         .nav-btn.active { background: #0F172A; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
-        /* SCREEN & TABS */
-        .screen { flex: 1; position: relative; overflow: hidden; } /* Занимает все оставшееся место */
-        .tab-content { 
-            display: none; 
-            width: 100%; height: 100%; 
-            padding: 0; 
-            overflow-y: auto; /* Скролл ВНУТРИ вкладки */
-            opacity: 0; transition: opacity 0.3s ease; 
-        }
+        /* SCREEN */
+        .screen { flex: 1; position: relative; overflow: hidden; }
+        .tab-content { display: none; width: 100%; height: 100%; padding: 0; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease; }
         .tab-content.active { display: flex; flex-direction: column; opacity: 1; }
         #tab-dashboard.active { display: block; } 
 
-        /* --- DASHBOARD LAYOUT --- */
+        /* --- DASHBOARD LAYOUT (FIXED) --- */
         .dash-container { 
             display: grid; 
-            /* Фиксируем правую колонку (360px), левая (1fr) занимает остаток */
+            /* Левая часть (1fr) + Правая часть (360px) */
             grid-template-columns: 1fr 360px; 
             height: 100%; width: 100%; 
         }
         
+        /* ЛЕВАЯ ПАНЕЛЬ - ТЕПЕРЬ НА ВСЮ ШИРИНУ */
         .dash-left { 
             padding: 40px; 
-            overflow-y: auto; /* Левая часть скроллится отдельно */
-            display: flex; flex-direction: column; align-items: center; 
+            overflow-y: auto; 
+            display: flex; flex-direction: column; 
+            /* УБРАЛИ align-items: center, чтобы контент растягивался */
         }
 
-        .dash-wrapper { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 30px; }
+        .dash-wrapper {
+            /* УБРАЛИ max-width: 1000px, теперь контент занимает все место */
+            width: 100%; 
+            display: flex; flex-direction: column; gap: 30px;
+        }
+
         .dash-right { background: #fff; border-left: 1px solid var(--border); padding: 0; overflow: hidden; position: relative;}
 
-        /* CARDS & WIDGETS */
-        .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        /* QUICK ACCESS (GRID) */
+        .res-grid { 
+            display: grid; 
+            /* Адаптивная сетка: минимум 240px на карточку, иначе перенос */
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            gap: 20px; 
+        }
         .res-card { 
             display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
-            gap: 12px; padding: 20px; background: #fff; border: 1px solid var(--border); 
+            gap: 12px; padding: 24px; background: #fff; border: 1px solid var(--border); 
             border-radius: 20px; text-decoration: none; color: var(--text-main); transition: 0.2s; height: 100%;
         }
         .res-card:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
-        .res-icon { width: 40px; height: 40px; background: #F5F0FF; color: var(--brand); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .res-icon { width: 44px; height: 44px; background: #F5F0FF; color: var(--brand); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         
-        .widgets-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; min-height: 280px; }
+        /* LIVE STATUS (GRID) */
+        .widgets-row { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; /* Две колонки всегда */
+            gap: 20px; 
+            min-height: 300px; 
+        }
+        
         .dash-widget {
-            background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 24px;
+            background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 28px;
             display: flex; flex-direction: column; justify-content: space-between;
             transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
         }
         .dash-widget:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: var(--shadow); }
         
-        .section-title { font-family: 'Manrope'; font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; padding-left: 4px;}
+        .section-title { font-family: 'Manrope'; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; padding-left: 4px;}
         .widget-label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; display: flex; justify-content: space-between; z-index: 2; position: relative; letter-spacing: 0.5px;}
 
         /* WIDGET CONTENT */
         .leader-widget-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; position: relative; z-index: 2; margin-top: 10px; }
-        .leader-banner { position: absolute; top: 0; left: 0; width: 100%; height: 90px; background: var(--brand-light); opacity: 0.6; z-index: 1; }
-        .top-leader-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background: #fff; margin-bottom: 12px; margin-top: 20px; position: relative; z-index: 2;}
-        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 18px; margin-bottom: 4px; }
+        .leader-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100px; background: var(--brand-light); opacity: 0.6; z-index: 1; }
+        .top-leader-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background: #fff; margin-bottom: 12px; margin-top: 25px; position: relative; z-index: 2;}
+        .top-leader-name { font-family: 'Manrope'; font-weight: 800; font-size: 20px; margin-bottom: 4px; }
         .top-leader-role { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: #fff; background: #000; }
         
-        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 22px; line-height: 1.3; margin-top: 20px; }
+        .next-event-title { font-family: 'Manrope'; font-weight: 800; font-size: 24px; line-height: 1.3; margin-top: 20px; }
         .next-event-time { font-size: 13px; color: var(--text-sub); margin-top: 15px; display: flex; align-items: center; gap: 8px; background: #F8FAFC; padding: 8px 14px; border-radius: 8px; width: fit-content; border: 1px solid var(--border); font-weight: 600;}
 
         /* OTHER TABS */
@@ -181,13 +185,11 @@
         .cal-btn { background: #0F172A; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; margin-left: auto; }
 
         @media (max-width: 900px) {
-            /* MOBILE ADAPTATION */
-            body { padding: 0; display: block; overflow: auto; height: auto;}
-            .interface { height: auto; min-height: 100vh; width: 100%; border-radius: 0; margin: 0; max-width: none; }
             .dash-container { grid-template-columns: 1fr; }
             .dash-right { display: none; }
             .res-grid { grid-template-columns: 1fr; }
             .widgets-row { grid-template-columns: 1fr; }
+            .interface { height: auto; min-height: 100vh; border-radius: 0; width: 100%; margin: 0; }
         }
     </style>
 </head>
@@ -199,8 +201,8 @@
         <header>
             <div class="logo-group">
                 <!-- ВСТАВЬТЕ ССЫЛКУ НА ВАШ ЛОГОТИП НИЖЕ В src="" -->
-                <img src="https://placehold.co/40x40?text=Pi2" alt="Pi2 Logo" class="custom-logo">
-                <div style="font-family:'Manrope'; font-weight:800; font-size:22px;">Pi Squared</div>
+                <img src="https://placehold.co/40x40?text=Pi2" alt="Pi2" class="custom-logo">
+                <div class="logo-text" style="font-family:'Manrope'; font-weight:800; font-size:22px;">Pi Squared</div>
             </div>
             <div class="badge"><div class="dot"></div>Community Hub</div>
         </header>
@@ -228,15 +230,15 @@
                                 <div class="res-grid">
                                     <a href="https://pi2.network/" target="_blank" class="res-card">
                                         <div class="res-icon"><i class="fa-solid fa-globe"></i></div>
-                                        <div><div style="font-weight:700;">Official Website</div><div style="font-size:12px;color:gray;">pi2.network</div></div>
+                                        <div><div style="font-weight:700; font-size:15px;">Official Website</div><div style="font-size:12px;color:gray;">pi2.network</div></div>
                                     </a>
                                     <a href="https://docs.pi2.network/" target="_blank" class="res-card">
                                         <div class="res-icon"><i class="fa-solid fa-book-open"></i></div>
-                                        <div><div style="font-weight:700;">Documentation</div><div style="font-size:12px;color:gray;">Developer Docs</div></div>
+                                        <div><div style="font-weight:700; font-size:15px;">Documentation</div><div style="font-size:12px;color:gray;">Developer Docs</div></div>
                                     </a>
                                     <a href="https://discord.com/invite/NdBJBZMz4e" target="_blank" class="res-card">
                                         <div class="res-icon"><i class="fa-brands fa-discord"></i></div>
-                                        <div><div style="font-weight:700;">Discord</div><div style="font-size:12px;color:gray;">Community Chat</div></div>
+                                        <div><div style="font-weight:700; font-size:15px;">Discord</div><div style="font-size:12px;color:gray;">Community Chat</div></div>
                                     </a>
                                 </div>
                             </div>
